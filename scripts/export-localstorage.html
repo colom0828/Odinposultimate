@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exportar Datos de ODIN POS</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 800px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    
+    h1 {
+      color: #fff;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    
+    p {
+      color: #cbd5e1;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    
+    .button {
+      background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #f97316 100%);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+    }
+    
+    .button:active {
+      transform: translateY(0);
+    }
+    
+    .output {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(168, 85, 247, 0.2);
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    pre {
+      color: #86efac;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .info {
+      background: rgba(99, 102, 241, 0.1);
+      border-left: 4px solid #6366f1;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    
+    .info-text {
+      color: #93c5fd;
+      margin: 0;
+      font-size: 14px;
+    }
+    
+    .success {
+      background: rgba(34, 197, 94, 0.1);
+      border-left: 4px solid #22c55e;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 20px;
+      display: none;
+    }
+    
+    .success-text {
+      color: #86efac;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🗄️ Exportar Datos de ODIN POS</h1>
+    <p>
+      Esta herramienta te permite exportar todos los datos guardados en localStorage
+      para migrarlos a tu base de datos backend.
+    </p>
+    
+    <div class="info">
+      <p class="info-text">
+        <strong>Instrucciones:</strong> Abre esta página mientras ODIN POS esté en otra pestaña del mismo navegador.
+        Los datos se exportarán en formato JSON listo para importar.
+      </p>
+    </div>
+    
+    <button class="button" onclick="exportarDatos()">📥 Exportar Todo</button>
+    <button class="button" onclick="exportarEmpresa()">🏢 Solo Empresa</button>
+    <button class="button" onclick="copiarPortapapeles()">📋 Copiar JSON</button>
+    <button class="button" onclick="descargarJSON()">💾 Descargar JSON</button>
+    
+    <div id="success" class="success">
+      <p class="success-text">✅ Datos exportados correctamente</p>
+    </div>
+    
+    <div class="output" id="output">
+      <pre id="json-output">Presiona "Exportar Todo" para ver los datos...</pre>
+    </div>
+  </div>
+
+  <script>
+    let datosExportados = {};
+
+    function exportarDatos() {
+      datosExportados = {
+        empresa: JSON.parse(localStorage.getItem('empresa_config') || '{}'),
+        metadata: {
+          exportado: new Date().toISOString(),
+          version: '1.0.0',
+          origen: 'ODIN POS - localStorage'
+        }
+      };
+      
+      mostrarDatos();
+    }
+
+    function exportarEmpresa() {
+      datosExportados = {
+        empresa: JSON.parse(localStorage.getItem('empresa_config') || '{}'),
+        metadata: {
+          exportado: new Date().toISOString(),
+          tipo: 'solo_empresa'
+        }
+      };
+      
+      mostrarDatos();
+    }
+
+    function mostrarDatos() {
+      const output = document.getElementById('json-output');
+      const success = document.getElementById('success');
+      
+      output.textContent = JSON.stringify(datosExportados, null, 2);
+      success.style.display = 'block';
+      
+      setTimeout(() => {
+        success.style.display = 'none';
+      }, 3000);
+    }
+
+    function copiarPortapapeles() {
+      const texto = JSON.stringify(datosExportados, null, 2);
+      
+      navigator.clipboard.writeText(texto).then(() => {
+        alert('✅ JSON copiado al portapapeles');
+      }).catch(err => {
+        alert('❌ Error al copiar: ' + err);
+      });
+    }
+
+    function descargarJSON() {
+      const dataStr = JSON.stringify(datosExportados, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `odin-pos-datos-${Date.now()}.json`;
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      URL.revokeObjectURL(url);
+      alert('✅ Archivo JSON descargado');
+    }
+
+    // Auto-exportar al cargar
+    window.addEventListener('load', () => {
+      console.log('📊 Herramienta de exportación cargada');
+      console.log('💡 Asegúrate de tener ODIN POS abierto en otra pestaña');
+    });
+  </script>
+</body>
+</html>
