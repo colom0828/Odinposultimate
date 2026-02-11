@@ -1,35 +1,69 @@
 'use client';
 
 import { useState } from 'react';
-import { LogIn, Mail, Lock } from 'lucide-react';
+import { LogIn, Mail, Lock, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { OdinLogo } from '../../components/OdinLogo';
 import { LoadingScreen } from '../../components/LoadingScreen';
+import { validateCredentials, saveSession } from '../../utils/auth';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     
+    // Validar campos vacíos
+    if (!username.trim() || !password.trim()) {
+      setError('Por favor ingresa usuario y contraseña');
+      toast.error('Por favor completa todos los campos');
+      return;
+    }
+
     // Mostrar pantalla de carga
     setIsLoading(true);
     
-    // Simular proceso de autenticación y navegación después de 2 segundos
+    // Simular pequeño delay (como si fuera petición real)
     setTimeout(() => {
-      window.history.pushState({}, '', '/admin/dashboard');
-      window.dispatchEvent(new PopStateEvent('popstate'));
-    }, 2000);
+      // Validar credenciales
+      const response = validateCredentials({
+        username: username.trim(),
+        password: password.trim(),
+      });
+
+      if (!response.success) {
+        setIsLoading(false);
+        setError(response.message || 'Error al iniciar sesión');
+        toast.error(response.message || 'Credenciales inválidas');
+        return;
+      }
+
+      // Login exitoso
+      if (response.user && response.token) {
+        saveSession(response.user, response.token, rememberMe);
+        toast.success(`¡Bienvenido ${response.user.nombre}!`);
+        
+        // Redirigir al dashboard
+        setTimeout(() => {
+          window.history.pushState({}, '', '/admin/dashboard');
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }, 800);
+      }
+    }, 800);
   };
 
   const handleForgotPassword = (e: React.MouseEvent) => {
     e.preventDefault();
-    alert('Por favor contacte al administrador del sistema para restablecer su contraseña.');
+    toast.info('Contacta al administrador del sistema para restablecer tu contraseña');
   };
 
   return (
@@ -116,6 +150,27 @@ export default function LoginPage() {
               onSubmit={handleLogin} 
               className="space-y-6"
             >
+              {/* Error Message */}
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start space-x-3"
+                  >
+                    <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-red-400 font-medium text-sm">{error}</p>
+                      <p className="text-red-400/70 text-xs mt-1">
+                        Verifica tus credenciales e intenta nuevamente
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-slate-300 text-sm">
                   Usuario o Email
@@ -125,9 +180,16 @@ export default function LoginPage() {
                   <Input
                     id="email"
                     type="text"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-11 bg-slate-950/50 border-purple-500/30 text-white placeholder:text-slate-500 focus:border-purple-500 focus:ring-purple-500/20 h-12 rounded-xl"
+                    value={username}
+                    onChange={(e) => {
+                      setUsername(e.target.value);
+                      setError(''); // Limpiar error al escribir
+                    }}
+                    className={`pl-11 bg-slate-950/50 text-white placeholder:text-slate-500 focus:ring-purple-500/20 h-12 rounded-xl transition-all ${
+                      error 
+                        ? 'border-red-500/50 focus:border-red-500' 
+                        : 'border-purple-500/30 focus:border-purple-500'
+                    }`}
                     placeholder="ej. admin"
                     required
                   />
@@ -144,8 +206,15 @@ export default function LoginPage() {
                     id="password"
                     type="password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pl-11 bg-slate-950/50 border-purple-500/30 text-white placeholder:text-slate-500 focus:border-purple-500 focus:ring-purple-500/20 h-12 rounded-xl"
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setError(''); // Limpiar error al escribir
+                    }}
+                    className={`pl-11 bg-slate-950/50 text-white placeholder:text-slate-500 focus:ring-purple-500/20 h-12 rounded-xl transition-all ${
+                      error 
+                        ? 'border-red-500/50 focus:border-red-500' 
+                        : 'border-purple-500/30 focus:border-purple-500'
+                    }`}
                     placeholder="••••"
                     required
                   />
@@ -157,6 +226,8 @@ export default function LoginPage() {
                   <input 
                     type="checkbox" 
                     className="rounded border-purple-500/30 bg-slate-950/50 text-purple-500 focus:ring-purple-500/20" 
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
                   />
                   <span className="text-sm text-slate-300">Recordarme</span>
                 </label>

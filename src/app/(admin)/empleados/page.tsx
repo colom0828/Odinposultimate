@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Search, Edit, Trash2, Shield, Mail, Phone, X, Save } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Shield, Mail, Phone, X, Save, Filter } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Card } from '../../components/ui/card';
@@ -185,12 +186,22 @@ export default function EmpleadosPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
       {/* Page header */}
-      <div className="flex items-center justify-between">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+        className="flex items-center justify-between"
+      >
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Empleados</h1>
-          <p className="text-slate-400">Gestión de empleados del sistema</p>
+          <h1 className="text-3xl font-bold text-[var(--odin-text-primary)] mb-2">Empleados</h1>
+          <p className="text-[var(--odin-text-secondary)]">Gestión de empleados del sistema</p>
         </div>
         <Button 
           onClick={() => handleOpenModal()}
@@ -199,83 +210,87 @@ export default function EmpleadosPage() {
           <Plus className="w-5 h-5 mr-2" />
           Nuevo Empleado
         </Button>
-      </div>
+      </motion.div>
 
       {/* Stats cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-purple-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Total Empleados</p>
-          <p className="text-2xl font-bold text-white">{employees.length}</p>
+        <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Total Empleados</p>
+          <p className="text-2xl font-bold text-[var(--odin-text-primary)]">{employees.length}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-slate-900/50 to-green-900/20 border-green-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Empleados Activos</p>
+        <Card className="bg-[var(--odin-bg-card)] border-green-500/20 p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Empleados Activos</p>
           <p className="text-2xl font-bold text-green-400">{activeEmployees}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-purple-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Administradores</p>
+        <Card className="bg-[var(--odin-bg-card)] border-purple-500/20 p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Administradores</p>
           <p className="text-2xl font-bold text-purple-400">{adminEmployees}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-slate-900/50 to-green-900/20 border-green-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Cajeros</p>
+        <Card className="bg-[var(--odin-bg-card)] border-green-500/20 p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Cajeros</p>
           <p className="text-2xl font-bold text-green-400">{cashierEmployees}</p>
         </Card>
       </div>
 
       {/* Search bar */}
-      <Card className="bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-purple-500/20 p-6 backdrop-blur-sm">
+      <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-6 backdrop-blur-sm transition-colors duration-300">
         <div className="flex items-center space-x-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--odin-text-secondary)]" />
             <Input
               type="text"
               placeholder="Buscar por nombre o email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-11 bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+              className="pl-11 bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
             />
           </div>
-          <Button variant="outline" className="border-purple-500/30 text-slate-300 hover:bg-purple-500/10">
+          <Button 
+            variant="outline" 
+            className="border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/10 hover:text-white hover:border-purple-500/50 transition-all"
+          >
+            <Filter className="w-4 h-4 mr-2" />
             Filtros
           </Button>
         </div>
       </Card>
 
       {/* Employees table */}
-      <Card className="bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-purple-500/20 backdrop-blur-sm overflow-hidden">
+      <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] backdrop-blur-sm overflow-hidden transition-colors duration-300">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-purple-500/20">
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">Empleado</th>
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">Email</th>
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">Teléfono</th>
-                <th className="text-center p-4 text-sm font-semibold text-slate-300">Rol</th>
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">Último Login</th>
-                <th className="text-center p-4 text-sm font-semibold text-slate-300">Ventas</th>
-                <th className="text-center p-4 text-sm font-semibold text-slate-300">Estado</th>
-                <th className="text-center p-4 text-sm font-semibold text-slate-300">Acciones</th>
+              <tr className="border-b border-[var(--odin-border-accent)]">
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Empleado</th>
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Email</th>
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Teléfono</th>
+                <th className="text-center p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Rol</th>
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Último Login</th>
+                <th className="text-center p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Ventas</th>
+                <th className="text-center p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Estado</th>
+                <th className="text-center p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filteredEmployees.map((employee) => (
-                <tr key={employee.id} className="border-b border-purple-500/10 hover:bg-purple-500/5 transition-colors">
+                <tr key={employee.id} className="border-b border-[var(--odin-border-accent)] hover:bg-purple-500/5 transition-colors">
                   <td className="p-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center">
                         <Shield className="w-5 h-5 text-white" />
                       </div>
-                      <span className="font-medium text-white">{employee.name}</span>
+                      <span className="font-medium text-[var(--odin-text-primary)]">{employee.name}</span>
                     </div>
                   </td>
-                  <td className="p-4 text-slate-400">{employee.email}</td>
-                  <td className="p-4 text-slate-400">{employee.phone}</td>
+                  <td className="p-4 text-[var(--odin-text-secondary)]">{employee.email}</td>
+                  <td className="p-4 text-[var(--odin-text-secondary)]">{employee.phone}</td>
                   <td className="p-4 text-center">
                     <Badge className={getRoleColor(employee.role)}>
                       {getRoleText(employee.role)}
                     </Badge>
                   </td>
-                  <td className="p-4 text-slate-400">{employee.lastLogin}</td>
-                  <td className="p-4 text-center font-semibold text-white">{employee.salesCount}</td>
+                  <td className="p-4 text-[var(--odin-text-secondary)]">{employee.lastLogin}</td>
+                  <td className="p-4 text-center font-semibold text-[var(--odin-text-primary)]">{employee.salesCount}</td>
                   <td className="p-4 text-center">
                     <Badge className={employee.status === 'active' 
                       ? 'bg-green-500/20 text-green-400 border-green-500/30' 
@@ -288,13 +303,13 @@ export default function EmpleadosPage() {
                     <div className="flex items-center justify-center space-x-2">
                       <button 
                         onClick={() => handleOpenModal(employee)}
-                        className="p-2 text-slate-400 hover:text-purple-400 hover:bg-purple-500/10 rounded-lg transition-colors"
+                        className="p-2 text-[var(--odin-text-secondary)] hover:text-purple-400 hover:bg-purple-500/10 rounded-lg transition-colors"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button 
                         onClick={() => handleDelete(employee.id)}
-                        className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                        className="p-2 text-[var(--odin-text-secondary)] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -307,15 +322,23 @@ export default function EmpleadosPage() {
         </div>
 
         {/* Pagination */}
-        <div className="p-4 border-t border-purple-500/20 flex items-center justify-between">
-          <p className="text-sm text-slate-400">
+        <div className="p-4 border-t border-[var(--odin-border-accent)] flex items-center justify-between">
+          <p className="text-sm text-[var(--odin-text-secondary)]">
             Mostrando {filteredEmployees.length} de {employees.length} empleados
           </p>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" className="border-purple-500/30 text-slate-300">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/10 hover:text-white hover:border-purple-500/50 transition-all"
+            >
               Anterior
             </Button>
-            <Button variant="outline" size="sm" className="border-purple-500/30 text-slate-300">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/10 hover:text-white hover:border-purple-500/50 transition-all"
+            >
               Siguiente
             </Button>
           </div>
@@ -332,7 +355,7 @@ export default function EmpleadosPage() {
             <Button
               variant="outline"
               onClick={handleCloseModal}
-              className="border-purple-500/30 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50"
+              className="border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-slate-700/50"
             >
               <X className="w-4 h-4 mr-2" />
               Cancelar
@@ -349,7 +372,7 @@ export default function EmpleadosPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
               Nombre Completo
             </label>
             <Input
@@ -358,12 +381,12 @@ export default function EmpleadosPage() {
               value={formData.name || ''}
               onChange={handleInputChange}
               placeholder="Ej: Juan Pérez"
-              className="bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+              className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
               Email
             </label>
             <Input
@@ -372,12 +395,12 @@ export default function EmpleadosPage() {
               value={formData.email || ''}
               onChange={handleInputChange}
               placeholder="empleado@odinpos.com"
-              className="bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+              className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
               Teléfono
             </label>
             <Input
@@ -386,19 +409,19 @@ export default function EmpleadosPage() {
               value={formData.phone || ''}
               onChange={handleInputChange}
               placeholder="+506 8888-8888"
-              className="bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+              className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
               Rol
             </label>
             <select
               name="role"
               value={formData.role || 'cashier'}
               onChange={handleInputChange}
-              className="w-full bg-slate-800/50 border border-purple-500/20 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full bg-[var(--odin-input-bg)] border border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
             >
               <option value="cashier">Cajero</option>
               <option value="supervisor">Supervisor</option>
@@ -408,14 +431,14 @@ export default function EmpleadosPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
               Estado
             </label>
             <select
               name="status"
               value={formData.status || 'active'}
               onChange={handleInputChange}
-              className="w-full bg-slate-800/50 border border-purple-500/20 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full bg-[var(--odin-input-bg)] border border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
             >
               <option value="active">Activo</option>
               <option value="inactive">Inactivo</option>
@@ -423,6 +446,6 @@ export default function EmpleadosPage() {
           </div>
         </div>
       </Modal>
-    </div>
+    </motion.div>
   );
 }

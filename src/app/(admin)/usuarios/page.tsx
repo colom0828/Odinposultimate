@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Search, Edit, Trash2, Shield, Mail, Phone, X, Save } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Shield, Mail, Phone, X, Save, Filter } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Card } from '../../components/ui/card';
@@ -199,12 +200,22 @@ export default function UsuariosPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
       {/* Page header */}
-      <div className="flex items-center justify-between">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+        className="flex items-center justify-between"
+      >
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Usuarios y Técnicos</h1>
-          <p className="text-slate-400">Gestión de usuarios del sistema</p>
+          <h1 className="text-3xl font-bold text-[var(--odin-text-primary)] mb-2">Usuarios y Técnicos</h1>
+          <p className="text-[var(--odin-text-secondary)]">Gestión de usuarios del sistema</p>
         </div>
         <Button 
           onClick={() => handleOpenModal()}
@@ -213,83 +224,87 @@ export default function UsuariosPage() {
           <Plus className="w-5 h-5 mr-2" />
           Nuevo Usuario
         </Button>
-      </div>
+      </motion.div>
 
       {/* Stats cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-slate-900 border-slate-700/50 p-4">
-          <p className="text-sm text-slate-400 mb-1">Total Usuarios</p>
-          <p className="text-2xl font-bold text-white">{users.length}</p>
+        <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-4 transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Total Usuarios</p>
+          <p className="text-2xl font-bold text-[var(--odin-text-primary)]">{users.length}</p>
         </Card>
-        <Card className="bg-slate-900 border-slate-700/50 p-4">
-          <p className="text-sm text-slate-400 mb-1">Usuarios Activos</p>
+        <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-4 transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Usuarios Activos</p>
           <p className="text-2xl font-bold text-green-400">{activeUsers}</p>
         </Card>
-        <Card className="bg-slate-900 border-slate-700/50 p-4">
-          <p className="text-sm text-slate-400 mb-1">Administradores</p>
+        <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-4 transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Administradores</p>
           <p className="text-2xl font-bold text-purple-400">{adminUsers}</p>
         </Card>
-        <Card className="bg-slate-900 border-slate-700/50 p-4">
-          <p className="text-sm text-slate-400 mb-1">Cajeros</p>
+        <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-4 transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Cajeros</p>
           <p className="text-2xl font-bold text-cyan-400">{cashierUsers}</p>
         </Card>
       </div>
 
       {/* Search bar */}
-      <Card className="bg-slate-900 border-slate-700/50 p-6">
+      <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-6 transition-colors duration-300">
         <div className="flex items-center space-x-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--odin-text-secondary)]" />
             <Input
               type="text"
               placeholder="Buscar por nombre o email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-11 bg-slate-800/50 border-slate-600 text-white placeholder:text-slate-500"
+              className="pl-11 bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)]"
             />
           </div>
-          <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
+          <Button 
+            variant="outline" 
+            className="border-purple-500/30 bg-slate-800/50 text-slate-300 hover:bg-purple-500/10 hover:text-white hover:border-purple-500/50 transition-all"
+          >
+            <Filter className="w-4 h-4 mr-2" />
             Filtros
           </Button>
         </div>
       </Card>
 
       {/* Users table */}
-      <Card className="bg-slate-900 border-slate-700/50 overflow-hidden">
+      <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] overflow-hidden transition-colors duration-300">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-700/50">
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">Usuario</th>
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">Email</th>
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">Teléfono</th>
-                <th className="text-center p-4 text-sm font-semibold text-slate-300">Rol</th>
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">Último Login</th>
-                <th className="text-center p-4 text-sm font-semibold text-slate-300">Ventas</th>
-                <th className="text-center p-4 text-sm font-semibold text-slate-300">Estado</th>
-                <th className="text-center p-4 text-sm font-semibold text-slate-300">Acciones</th>
+              <tr className="border-b border-[var(--odin-border-accent)]">
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Usuario</th>
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Email</th>
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Teléfono</th>
+                <th className="text-center p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Rol</th>
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Último Login</th>
+                <th className="text-center p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Ventas</th>
+                <th className="text-center p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Estado</th>
+                <th className="text-center p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filteredUsers.map((user) => (
-                <tr key={user.id} className="border-b border-slate-700/30 hover:bg-slate-800/50 transition-colors">
+                <tr key={user.id} className="border-b border-[var(--odin-border-accent)] hover:bg-purple-500/5 transition-colors">
                   <td className="p-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center">
                         <Shield className="w-5 h-5 text-white" />
                       </div>
-                      <span className="font-medium text-white">{user.name}</span>
+                      <span className="font-medium text-[var(--odin-text-primary)]">{user.name}</span>
                     </div>
                   </td>
-                  <td className="p-4 text-slate-400">{user.email}</td>
-                  <td className="p-4 text-slate-400">{user.phone}</td>
+                  <td className="p-4 text-[var(--odin-text-secondary)]">{user.email}</td>
+                  <td className="p-4 text-[var(--odin-text-secondary)]">{user.phone}</td>
                   <td className="p-4 text-center">
                     <Badge className={getRoleColor(user.role)}>
                       {getRoleText(user.role)}
                     </Badge>
                   </td>
-                  <td className="p-4 text-slate-400">{user.lastLogin}</td>
-                  <td className="p-4 text-center font-semibold text-white">{user.salesCount}</td>
+                  <td className="p-4 text-[var(--odin-text-secondary)]">{user.lastLogin}</td>
+                  <td className="p-4 text-center font-semibold text-[var(--odin-text-primary)]">{user.salesCount}</td>
                   <td className="p-4 text-center">
                     <Badge className={user.status === 'active' 
                       ? 'bg-green-500/20 text-green-400 border-green-500/30' 
@@ -302,13 +317,13 @@ export default function UsuariosPage() {
                     <div className="flex items-center justify-center space-x-2">
                       <button 
                         onClick={() => handleOpenModal(user)}
-                        className="p-2 text-slate-400 hover:text-indigo-400 hover:bg-slate-800 rounded-lg transition-colors"
+                        className="p-2 text-[var(--odin-text-secondary)] hover:text-indigo-400 hover:bg-purple-500/10 rounded-lg transition-colors"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button 
                         onClick={() => handleDelete(user.id)}
-                        className="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors"
+                        className="p-2 text-[var(--odin-text-secondary)] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -321,15 +336,23 @@ export default function UsuariosPage() {
         </div>
 
         {/* Pagination */}
-        <div className="p-4 border-t border-slate-700/50 flex items-center justify-between">
-          <p className="text-sm text-slate-400">
+        <div className="p-4 border-t border-[var(--odin-border-accent)] flex items-center justify-between">
+          <p className="text-sm text-[var(--odin-text-secondary)]">
             Mostrando {filteredUsers.length} de {users.length} usuarios
           </p>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" className="border-slate-600 text-slate-300">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/10 hover:text-white hover:border-purple-500/50 transition-all"
+            >
               Anterior
             </Button>
-            <Button variant="outline" size="sm" className="border-slate-600 text-slate-300">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/10 hover:text-white hover:border-purple-500/50 transition-all"
+            >
               Siguiente
             </Button>
           </div>
@@ -437,6 +460,6 @@ export default function UsuariosPage() {
           </div>
         </div>
       </Modal>
-    </div>
+    </motion.div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Plus, Search, Edit, Trash2, Package, X, Save } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Card } from '../../components/ui/card';
@@ -108,12 +109,22 @@ export default function InventarioPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
       {/* Page header */}
-      <div className="flex items-center justify-between">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+        className="flex items-center justify-between"
+      >
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Inventario</h1>
-          <p className="text-slate-400">Gestión de productos y stock</p>
+          <h1 className="text-3xl font-bold text-[var(--odin-text-primary)] mb-2">Inventario</h1>
+          <p className="text-[var(--odin-text-secondary)]">Gestión de productos y stock</p>
         </div>
         <Button 
           onClick={() => handleOpenModal()}
@@ -122,73 +133,73 @@ export default function InventarioPage() {
           <Plus className="w-5 h-5 mr-2" />
           Nuevo Producto
         </Button>
-      </div>
+      </motion.div>
 
       {/* Stats cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-purple-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Total Productos</p>
-          <p className="text-2xl font-bold text-white">{products.length}</p>
+        <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-4 backdrop-blur-sm transition-all duration-300 shadow-lg hover:shadow-xl">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Total Productos</p>
+          <p className="text-2xl font-bold text-[var(--odin-text-primary)]">{products.length}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-slate-900/50 to-green-900/20 border-green-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Productos Activos</p>
+        <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-4 backdrop-blur-sm transition-all duration-300 shadow-lg hover:shadow-xl">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Productos Activos</p>
           <p className="text-2xl font-bold text-green-400">{products.filter(p => p.status === 'active').length}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-slate-900/50 to-yellow-900/20 border-yellow-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Stock Bajo</p>
+        <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-4 backdrop-blur-sm transition-all duration-300 shadow-lg hover:shadow-xl">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Stock Bajo</p>
           <p className="text-2xl font-bold text-yellow-400">{products.filter(p => p.stock < 10 && p.stock > 0).length}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-slate-900/50 to-red-900/20 border-red-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Sin Stock</p>
+        <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-4 backdrop-blur-sm transition-all duration-300 shadow-lg hover:shadow-xl">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Sin Stock</p>
           <p className="text-2xl font-bold text-red-400">{products.filter(p => p.stock === 0).length}</p>
         </Card>
       </div>
 
       {/* Search */}
-      <Card className="bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-purple-500/20 p-6 backdrop-blur-sm">
+      <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-6 backdrop-blur-sm transition-all duration-300 shadow-lg">
         <div className="flex items-center space-x-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--odin-text-secondary)]" />
             <Input
               type="text"
               placeholder="Buscar por nombre o SKU..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-11 bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+              className="pl-11 bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
             />
           </div>
         </div>
       </Card>
 
       {/* Products table */}
-      <Card className="bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-purple-500/20 backdrop-blur-sm overflow-hidden">
+      <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] backdrop-blur-sm overflow-hidden transition-all duration-300 shadow-lg">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-purple-500/20">
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">Producto</th>
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">SKU</th>
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">Categoría</th>
-                <th className="text-right p-4 text-sm font-semibold text-slate-300">Precio</th>
-                <th className="text-center p-4 text-sm font-semibold text-slate-300">Stock</th>
-                <th className="text-center p-4 text-sm font-semibold text-slate-300">Estado</th>
-                <th className="text-center p-4 text-sm font-semibold text-slate-300">Acciones</th>
+              <tr className="border-b border-[var(--odin-border)]">
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Producto</th>
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">SKU</th>
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Categoría</th>
+                <th className="text-right p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Precio</th>
+                <th className="text-center p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Stock</th>
+                <th className="text-center p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Estado</th>
+                <th className="text-center p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filteredProducts.map((product) => (
-                <tr key={product.id} className="border-b border-purple-500/10 hover:bg-purple-500/5 transition-colors">
+                <tr key={product.id} className="border-b border-[var(--odin-border)] hover:bg-[var(--odin-input-bg)] transition-colors">
                   <td className="p-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center">
                         <Package className="w-5 h-5 text-white" />
                       </div>
-                      <span className="font-medium text-white">{product.name}</span>
+                      <span className="font-medium text-[var(--odin-text-primary)]">{product.name}</span>
                     </div>
                   </td>
-                  <td className="p-4 text-slate-400 font-mono text-sm">{product.sku}</td>
-                  <td className="p-4 text-slate-300">{product.category}</td>
-                  <td className="p-4 text-right font-semibold text-white">{formatCurrency(product.price)}</td>
+                  <td className="p-4 text-[var(--odin-text-secondary)] font-mono text-sm">{product.sku}</td>
+                  <td className="p-4 text-[var(--odin-text-primary)]">{product.category}</td>
+                  <td className="p-4 text-right font-semibold text-[var(--odin-text-primary)]">{formatCurrency(product.price)}</td>
                   <td className="p-4 text-center">
                     <span className={`font-medium ${
                       product.stock === 0 ? 'text-red-400' :
@@ -210,13 +221,13 @@ export default function InventarioPage() {
                     <div className="flex items-center justify-center space-x-2">
                       <button 
                         onClick={() => handleOpenModal(product)}
-                        className="p-2 text-slate-400 hover:text-purple-400 hover:bg-purple-500/10 rounded-lg transition-colors"
+                        className="p-2 text-[var(--odin-text-secondary)] hover:text-purple-400 hover:bg-purple-500/10 rounded-lg transition-colors"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button 
                         onClick={() => handleDelete(product.id)}
-                        className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                        className="p-2 text-[var(--odin-text-secondary)] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -332,6 +343,6 @@ export default function InventarioPage() {
           </div>
         </div>
       </Modal>
-    </div>
+    </motion.div>
   );
 }

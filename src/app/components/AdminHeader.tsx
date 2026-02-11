@@ -106,12 +106,12 @@ export function AdminHeader() {
   };
 
   return (
-    <header className="h-16 bg-gradient-to-r from-slate-950/80 via-slate-900/80 to-slate-950/80 backdrop-blur-md border-b border-purple-500/20 flex items-center justify-between px-6 sticky top-0 z-10">
+    <header className="h-16 flex items-center justify-between px-6 sticky top-0 z-10 bg-white/70 backdrop-blur-xl border-b border-slate-200 dark:bg-gradient-to-r dark:from-slate-950/80 dark:via-slate-900/80 dark:to-slate-950/80 dark:border-purple-500/20 transition-colors duration-300">
       <div className="flex items-center space-x-4">
         <OdinLogo size="sm" />
         <div>
-          <h2 className="text-lg font-semibold text-white">ODIN POS</h2>
-          <p className="text-xs text-slate-400">Sistema de Punto de Venta</p>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">ODIN POS</h2>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Sistema de Punto de Venta</p>
         </div>
       </div>
 
@@ -120,7 +120,7 @@ export function AdminHeader() {
         <div className="relative">
           <button 
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative p-2 text-slate-400 hover:text-white hover:bg-purple-500/10 rounded-lg transition-colors"
+            className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-purple-500/10 rounded-lg transition-colors"
           >
             <Bell className="w-5 h-5" />
             {unreadCount > 0 && (
@@ -152,13 +152,13 @@ export function AdminHeader() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ duration: 0.2, ease: "easeOut" }}
-                  className="absolute right-0 top-12 w-96 max-h-[500px] bg-slate-900 border border-purple-500/30 rounded-lg shadow-2xl shadow-purple-500/20 overflow-hidden z-50"
+                  className="absolute right-0 top-12 w-96 max-h-[500px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-purple-500/30 rounded-lg shadow-2xl overflow-hidden z-50"
                 >
                   {/* Header */}
-                  <div className="p-4 border-b border-purple-500/20 bg-gradient-to-r from-purple-500/10 to-pink-500/10 flex items-center justify-between">
+                  <div className="p-4 border-b border-slate-200 dark:border-purple-500/20 bg-purple-50 dark:bg-purple-500/10 flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Bell className="w-5 h-5 text-purple-400" />
-                      <h3 className="font-semibold text-white">Notificaciones</h3>
+                      <h3 className="font-semibold text-slate-900 dark:text-white">Notificaciones</h3>
                       {unreadCount > 0 && (
                         <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
                           {unreadCount} nuevas
@@ -167,7 +167,7 @@ export function AdminHeader() {
                     </div>
                     <button 
                       onClick={() => setShowNotifications(false)}
-                      className="text-slate-400 hover:text-white transition-colors"
+                      className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -175,7 +175,7 @@ export function AdminHeader() {
 
                   {/* Actions */}
                   {notifications.length > 0 && (
-                    <div className="p-3 border-b border-purple-500/10 bg-slate-800/50 flex items-center justify-between">
+                    <div className="p-3 border-b border-slate-200 dark:border-purple-500/10 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
                       <button 
                         onClick={markAllAsRead}
                         className="text-sm text-purple-400 hover:text-purple-300 flex items-center space-x-1 transition-colors"
@@ -199,10 +199,10 @@ export function AdminHeader() {
                       notifications.map(notification => (
                         <div 
                           key={notification.id}
-                          className={`group p-4 border-b border-purple-500/10 transition-colors relative ${
+                          className={`group p-4 border-b border-slate-200 dark:border-purple-500/10 transition-colors relative ${
                             notification.read 
-                              ? 'bg-slate-900/50 hover:bg-slate-800/50' 
-                              : 'bg-purple-500/5 hover:bg-purple-500/10'
+                              ? 'hover:bg-slate-50 dark:hover:bg-slate-800/50' 
+                              : 'bg-purple-50 dark:bg-purple-500/5 hover:bg-purple-100 dark:hover:bg-purple-500/10'
                           }`}
                         >
                           <div className="flex items-start space-x-3">
@@ -218,7 +218,7 @@ export function AdminHeader() {
                             >
                               <div className="flex items-start justify-between">
                                 <p className={`text-sm font-medium pr-2 ${
-                                  notification.read ? 'text-slate-300' : 'text-white'
+                                  notification.read ? 'text-slate-600 dark:text-slate-300' : 'text-slate-900 dark:text-white'
                                 }`}>
                                   {notification.title}
                                 </p>
@@ -226,10 +226,10 @@ export function AdminHeader() {
                                   <span className="ml-2 w-2 h-2 bg-purple-500 rounded-full flex-shrink-0"></span>
                                 )}
                               </div>
-                              <p className="text-sm text-slate-400 mt-1">
+                              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
                                 {notification.message}
                               </p>
-                              <p className="text-xs text-slate-500 mt-2">
+                              <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
                                 {notification.time}
                               </p>
                             </div>
@@ -238,7 +238,7 @@ export function AdminHeader() {
                                 e.stopPropagation();
                                 deleteNotification(notification.id);
                               }}
-                              className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-all"
+                              className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-600 hover:text-red-400 hover:bg-red-500/10 dark:text-slate-400 dark:hover:text-red-400 rounded transition-all"
                               title="Eliminar notificación"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -248,8 +248,8 @@ export function AdminHeader() {
                       ))
                     ) : (
                       <div className="p-8 text-center">
-                        <Bell className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                        <p className="text-slate-400">No hay notificaciones</p>
+                        <Bell className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+                        <p className="text-slate-600 dark:text-slate-400">No hay notificaciones</p>
                       </div>
                     )}
                   </div>
@@ -260,13 +260,13 @@ export function AdminHeader() {
         </div>
 
         {/* User menu */}
-        <div className="flex items-center space-x-3 px-3 py-2 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-lg border border-purple-500/30">
+        <div className="flex items-center space-x-3 px-3 py-2 bg-purple-50 dark:bg-purple-500/10 rounded-lg border border-slate-200 dark:border-purple-500/30">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center">
             <User className="w-4 h-4 text-white" />
           </div>
           <div className="text-sm">
-            <p className="text-white font-medium">Admin</p>
-            <p className="text-slate-400 text-xs">Administrador</p>
+            <p className="text-slate-900 dark:text-white font-medium">Admin</p>
+            <p className="text-slate-600 dark:text-slate-400 text-xs">Administrador</p>
           </div>
         </div>
 
@@ -274,7 +274,7 @@ export function AdminHeader() {
         <Button
           onClick={handleLogout}
           variant="outline"
-          className="border-purple-500/30 bg-slate-800/30 text-slate-300 hover:bg-gradient-to-r hover:from-red-600 hover:to-pink-600 hover:text-white hover:border-transparent transition-all"
+          className="border-slate-300 bg-slate-100 text-slate-700 hover:bg-gradient-to-r hover:from-red-600 hover:to-pink-600 hover:text-white hover:border-transparent dark:border-purple-500/30 dark:bg-slate-800/30 dark:text-slate-300 transition-all"
         >
           <LogOut className="w-4 h-4 mr-2" />
           Cerrar Sesión

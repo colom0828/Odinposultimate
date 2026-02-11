@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Search, Edit, Trash2, Building2, Mail, Phone, MapPin, X, Save } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Building2, Mail, Phone, MapPin, X, Save, Filter } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Card } from '../../components/ui/card';
@@ -153,12 +154,22 @@ export default function ProveedoresPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
       {/* Page header */}
-      <div className="flex items-center justify-between">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+        className="flex items-center justify-between"
+      >
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Proveedores</h1>
-          <p className="text-slate-400">Gestión de proveedores y contactos</p>
+          <h1 className="text-3xl font-bold text-[var(--odin-text-primary)] mb-2">Proveedores</h1>
+          <p className="text-[var(--odin-text-secondary)]">Gestión de proveedores y contactos</p>
         </div>
         <Button 
           onClick={() => handleOpenModal()}
@@ -167,42 +178,46 @@ export default function ProveedoresPage() {
           <Plus className="w-5 h-5 mr-2" />
           Nuevo Proveedor
         </Button>
-      </div>
+      </motion.div>
 
       {/* Stats cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-purple-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Total Proveedores</p>
-          <p className="text-2xl font-bold text-white">{suppliers.length}</p>
+        <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Total Proveedores</p>
+          <p className="text-2xl font-bold text-[var(--odin-text-primary)]">{suppliers.length}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-slate-900/50 to-green-900/20 border-green-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Proveedores Activos</p>
+        <Card className="bg-[var(--odin-bg-card)] border-green-500/20 p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Proveedores Activos</p>
           <p className="text-2xl font-bold text-green-400">{suppliers.filter(s => s.status === 'active').length}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-slate-900/50 to-blue-900/20 border-blue-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Total Productos</p>
+        <Card className="bg-[var(--odin-bg-card)] border-blue-500/20 p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Total Productos</p>
           <p className="text-2xl font-bold text-blue-400">{suppliers.reduce((sum, s) => sum + s.products, 0)}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-slate-900/50 to-orange-900/20 border-orange-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Órdenes Este Mes</p>
+        <Card className="bg-[var(--odin-bg-card)] border-orange-500/20 p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Órdenes Este Mes</p>
           <p className="text-2xl font-bold text-orange-400">12</p>
         </Card>
       </div>
 
       {/* Search bar */}
-      <Card className="bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-purple-500/20 p-6 backdrop-blur-sm">
+      <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-6 backdrop-blur-sm transition-colors duration-300">
         <div className="flex items-center space-x-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--odin-text-secondary)]" />
             <Input
               type="text"
               placeholder="Buscar por nombre o contacto..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-11 bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+              className="pl-11 bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
             />
           </div>
-          <Button variant="outline" className="border-purple-500/30 text-slate-300 hover:bg-purple-500/10">
+          <Button 
+            variant="outline" 
+            className="border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/10 hover:text-white hover:border-purple-500/50 transition-all"
+          >
+            <Filter className="w-4 h-4 mr-2" />
             Filtros
           </Button>
         </div>
@@ -211,27 +226,27 @@ export default function ProveedoresPage() {
       {/* Suppliers grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredSuppliers.map((supplier) => (
-          <Card key={supplier.id} className="bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-purple-500/20 p-6 backdrop-blur-sm hover:border-purple-500/40 transition-all">
+          <Card key={supplier.id} className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-6 backdrop-blur-sm hover:border-purple-500/40 transition-all">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-orange-500 flex items-center justify-center">
                   <Building2 className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">{supplier.name}</h3>
-                  <p className="text-sm text-slate-400">{supplier.contact}</p>
+                  <h3 className="font-semibold text-[var(--odin-text-primary)]">{supplier.name}</h3>
+                  <p className="text-sm text-[var(--odin-text-secondary)]">{supplier.contact}</p>
                 </div>
               </div>
               <div className="flex space-x-1">
                 <button 
                   onClick={() => handleOpenModal(supplier)}
-                  className="p-2 text-slate-400 hover:text-purple-400 hover:bg-purple-500/10 rounded-lg transition-colors"
+                  className="p-2 text-[var(--odin-text-secondary)] hover:text-purple-400 hover:bg-purple-500/10 rounded-lg transition-colors"
                 >
                   <Edit className="w-4 h-4" />
                 </button>
                 <button 
                   onClick={() => handleDelete(supplier.id)}
-                  className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                  className="p-2 text-[var(--odin-text-secondary)] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -240,27 +255,27 @@ export default function ProveedoresPage() {
 
             <div className="space-y-3">
               <div className="flex items-center space-x-2 text-sm">
-                <Mail className="w-4 h-4 text-slate-400" />
-                <span className="text-slate-300">{supplier.email}</span>
+                <Mail className="w-4 h-4 text-[var(--odin-text-secondary)]" />
+                <span className="text-[var(--odin-text-primary)]">{supplier.email}</span>
               </div>
               <div className="flex items-center space-x-2 text-sm">
-                <Phone className="w-4 h-4 text-slate-400" />
-                <span className="text-slate-300">{supplier.phone}</span>
+                <Phone className="w-4 h-4 text-[var(--odin-text-secondary)]" />
+                <span className="text-[var(--odin-text-primary)]">{supplier.phone}</span>
               </div>
               <div className="flex items-center space-x-2 text-sm">
-                <MapPin className="w-4 h-4 text-slate-400" />
-                <span className="text-slate-300">{supplier.city}</span>
+                <MapPin className="w-4 h-4 text-[var(--odin-text-secondary)]" />
+                <span className="text-[var(--odin-text-primary)]">{supplier.city}</span>
               </div>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-purple-500/20 grid grid-cols-2 gap-4">
+            <div className="mt-4 pt-4 border-t border-[var(--odin-border-accent)] grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-slate-400 mb-1">Productos</p>
-                <p className="font-semibold text-white">{supplier.products}</p>
+                <p className="text-xs text-[var(--odin-text-secondary)] mb-1">Productos</p>
+                <p className="font-semibold text-[var(--odin-text-primary)]">{supplier.products}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-400 mb-1">Última Orden</p>
-                <p className="font-semibold text-white">{supplier.lastOrder}</p>
+                <p className="text-xs text-[var(--odin-text-secondary)] mb-1">Última Orden</p>
+                <p className="font-semibold text-[var(--odin-text-primary)]">{supplier.lastOrder}</p>
               </div>
             </div>
           </Card>
@@ -277,7 +292,7 @@ export default function ProveedoresPage() {
             <Button
               variant="outline"
               onClick={handleCloseModal}
-              className="border-purple-500/30 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50"
+              className="border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-slate-700/50"
             >
               <X className="w-4 h-4 mr-2" />
               Cancelar
@@ -294,7 +309,7 @@ export default function ProveedoresPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
               Nombre del Proveedor
             </label>
             <Input
@@ -303,12 +318,12 @@ export default function ProveedoresPage() {
               value={formData.name || ''}
               onChange={handleInputChange}
               placeholder="Ej: TechSupply Costa Rica"
-              className="bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+              className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
               Persona de Contacto
             </label>
             <Input
@@ -317,12 +332,12 @@ export default function ProveedoresPage() {
               value={formData.contact || ''}
               onChange={handleInputChange}
               placeholder="Ej: Juan Pérez"
-              className="bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+              className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
               Email
             </label>
             <Input
@@ -331,12 +346,12 @@ export default function ProveedoresPage() {
               value={formData.email || ''}
               onChange={handleInputChange}
               placeholder="contacto@empresa.com"
-              className="bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+              className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
               Teléfono
             </label>
             <Input
@@ -345,12 +360,12 @@ export default function ProveedoresPage() {
               value={formData.phone || ''}
               onChange={handleInputChange}
               placeholder="+506 2222-3333"
-              className="bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+              className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
               Ciudad
             </label>
             <Input
@@ -359,19 +374,19 @@ export default function ProveedoresPage() {
               value={formData.city || ''}
               onChange={handleInputChange}
               placeholder="Ej: San José"
-              className="bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+              className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
               Estado
             </label>
             <select
               name="status"
               value={formData.status || 'active'}
               onChange={handleInputChange}
-              className="w-full bg-slate-800/50 border border-purple-500/20 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full bg-[var(--odin-input-bg)] border border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
             >
               <option value="active">Activo</option>
               <option value="inactive">Inactivo</option>
@@ -379,6 +394,6 @@ export default function ProveedoresPage() {
           </div>
         </div>
       </Modal>
-    </div>
+    </motion.div>
   );
 }

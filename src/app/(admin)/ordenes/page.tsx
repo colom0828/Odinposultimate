@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Plus, Search, Edit, Trash2, Download, Filter, X, Save, Eye } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Card } from '../../components/ui/card';
@@ -196,12 +197,22 @@ export default function OrdenesPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
       {/* Page header */}
-      <div className="flex items-center justify-between">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+        className="flex items-center justify-between"
+      >
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Órdenes de Compra</h1>
-          <p className="text-slate-400">Gestión de órdenes a proveedores</p>
+          <h1 className="text-3xl font-bold text-[var(--odin-text-primary)] mb-2">Órdenes de Compra</h1>
+          <p className="text-[var(--odin-text-secondary)]">Gestión de órdenes a proveedores</p>
         </div>
         <Button 
           onClick={() => handleOpenModal()}
@@ -210,83 +221,102 @@ export default function OrdenesPage() {
           <Plus className="w-5 h-5 mr-2" />
           Nueva Orden
         </Button>
-      </div>
+      </motion.div>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-purple-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Total Órdenes</p>
-          <p className="text-2xl font-bold text-white">{orders.length}</p>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+        className="grid grid-cols-1 md:grid-cols-4 gap-4"
+      >
+        <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Total Órdenes</p>
+          <p className="text-2xl font-bold text-[var(--odin-text-primary)]">{orders.length}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-slate-900/50 to-yellow-900/20 border-yellow-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Pendientes</p>
+        <Card className="bg-[var(--odin-bg-card)] border-yellow-500/20 p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Pendientes</p>
           <p className="text-2xl font-bold text-yellow-400">{orders.filter(o => o.status === 'pending').length}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-slate-900/50 to-blue-900/20 border-blue-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Aprobadas</p>
+        <Card className="bg-[var(--odin-bg-card)] border-blue-500/20 p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Aprobadas</p>
           <p className="text-2xl font-bold text-blue-400">{orders.filter(o => o.status === 'approved').length}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-slate-900/50 to-green-900/20 border-green-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Entregadas</p>
+        <Card className="bg-[var(--odin-bg-card)] border-green-500/20 p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Entregadas</p>
           <p className="text-2xl font-bold text-green-400">{orders.filter(o => o.status === 'delivered').length}</p>
         </Card>
-      </div>
+      </motion.div>
 
       {/* Search and filters */}
-      <Card className="bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-purple-500/20 p-6 backdrop-blur-sm">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.3 }}
+      >
+      <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-6 backdrop-blur-sm transition-colors duration-300">
         <div className="flex items-center space-x-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--odin-text-secondary)]" />
             <Input
               type="text"
               placeholder="Buscar por ID o proveedor..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-11 bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+              className="pl-11 bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
             />
           </div>
-          <Button variant="outline" className="border-purple-500/30 text-slate-300 hover:bg-purple-500/10">
+          <Button 
+            variant="outline" 
+            className="border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/10 hover:text-white hover:border-purple-500/50 transition-all"
+          >
             <Filter className="w-4 h-4 mr-2" />
             Filtros
           </Button>
           <Button 
             onClick={handleExport}
             variant="outline" 
-            className="border-purple-500/30 text-slate-300 hover:bg-purple-500/10"
+            className="border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/10 hover:text-white hover:border-purple-500/50 transition-all"
           >
             <Download className="w-4 h-4 mr-2" />
             Exportar
           </Button>
         </div>
       </Card>
+      </motion.div>
 
       {/* Orders table */}
-      <Card className="bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-purple-500/20 backdrop-blur-sm overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.4 }}
+      >
+      <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] backdrop-blur-sm overflow-hidden transition-colors duration-300">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-purple-500/20">
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">ID Orden</th>
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">Proveedor</th>
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">Fecha</th>
-                <th className="text-center p-4 text-sm font-semibold text-slate-300">Items</th>
-                <th className="text-right p-4 text-sm font-semibold text-slate-300">Total</th>
-                <th className="text-left p-4 text-sm font-semibold text-slate-300">Entrega</th>
-                <th className="text-center p-4 text-sm font-semibold text-slate-300">Estado</th>
-                <th className="text-center p-4 text-sm font-semibold text-slate-300">Acciones</th>
+              <tr className="border-b border-[var(--odin-border-accent)]">
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">ID Orden</th>
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Proveedor</th>
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Fecha</th>
+                <th className="text-center p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Items</th>
+                <th className="text-right p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Total</th>
+                <th className="text-left p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Entrega</th>
+                <th className="text-center p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Estado</th>
+                <th className="text-center p-4 text-sm font-semibold text-[var(--odin-text-secondary)]">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filteredOrders.map((order) => (
-                <tr key={order.id} className="border-b border-purple-500/10 hover:bg-purple-500/5 transition-colors">
+                <tr key={order.id} className="border-b border-[var(--odin-border-accent)] hover:bg-purple-500/5 transition-colors">
                   <td className="p-4">
                     <span className="font-mono font-medium text-purple-400">{order.id}</span>
                   </td>
-                  <td className="p-4 text-white font-medium">{order.supplier}</td>
-                  <td className="p-4 text-slate-400">{order.date}</td>
-                  <td className="p-4 text-center text-slate-300">{order.items}</td>
-                  <td className="p-4 text-right font-semibold text-white">{formatCurrency(order.total)}</td>
-                  <td className="p-4 text-slate-400">{order.delivery}</td>
+                  <td className="p-4 text-[var(--odin-text-primary)] font-medium">{order.supplier}</td>
+                  <td className="p-4 text-[var(--odin-text-secondary)]">{order.date}</td>
+                  <td className="p-4 text-center text-[var(--odin-text-primary)]">{order.items}</td>
+                  <td className="p-4 text-right font-semibold text-[var(--odin-text-primary)]">{formatCurrency(order.total)}</td>
+                  <td className="p-4 text-[var(--odin-text-secondary)]">{order.delivery}</td>
                   <td className="p-4 text-center">
                     <Badge className={getStatusColor(order.status)}>
                       {getStatusText(order.status)}
@@ -296,21 +326,21 @@ export default function OrdenesPage() {
                     <div className="flex items-center justify-center space-x-2">
                       <button 
                         onClick={() => handleViewOrder(order)}
-                        className="p-2 text-slate-400 hover:text-purple-400 hover:bg-purple-500/10 rounded-lg transition-colors"
+                        className="p-2 text-[var(--odin-text-secondary)] hover:text-purple-400 hover:bg-purple-500/10 rounded-lg transition-colors"
                         title="Ver detalles"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
                       <button 
                         onClick={() => handleOpenModal(order)}
-                        className="p-2 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                        className="p-2 text-[var(--odin-text-secondary)] hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
                         title="Editar"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button 
                         onClick={() => handleDelete(order.id)}
-                        className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                        className="p-2 text-[var(--odin-text-secondary)] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                         title="Eliminar"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -324,20 +354,29 @@ export default function OrdenesPage() {
         </div>
 
         {/* Pagination */}
-        <div className="p-4 border-t border-purple-500/20 flex items-center justify-between">
-          <p className="text-sm text-slate-400">
+        <div className="p-4 border-t border-[var(--odin-border-accent)] flex items-center justify-between">
+          <p className="text-sm text-[var(--odin-text-secondary)]">
             Mostrando {filteredOrders.length} de {orders.length} órdenes
           </p>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" className="border-purple-500/30 text-slate-300">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/10 hover:text-white hover:border-purple-500/50 transition-all"
+            >
               Anterior
             </Button>
-            <Button variant="outline" size="sm" className="border-purple-500/30 text-slate-300">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/10 hover:text-white hover:border-purple-500/50 transition-all"
+            >
               Siguiente
             </Button>
           </div>
         </div>
       </Card>
+      </motion.div>
 
       {/* Modal para agregar/editar orden */}
       <Modal
@@ -349,7 +388,7 @@ export default function OrdenesPage() {
             <Button
               variant="outline"
               onClick={handleCloseModal}
-              className="border-purple-500/30 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50"
+              className="border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-slate-700/50"
             >
               <X className="w-4 h-4 mr-2" />
               Cancelar
@@ -366,7 +405,7 @@ export default function OrdenesPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
               Proveedor
             </label>
             <Input
@@ -375,13 +414,13 @@ export default function OrdenesPage() {
               value={formData.supplier || ''}
               onChange={handleInputChange}
               placeholder="Ej: TechSupply Costa Rica"
-              className="bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+              className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
                 Fecha de Orden
               </label>
               <Input
@@ -389,12 +428,12 @@ export default function OrdenesPage() {
                 name="date"
                 value={formData.date || ''}
                 onChange={handleInputChange}
-                className="bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+                className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
                 Fecha de Entrega
               </label>
               <Input
@@ -402,14 +441,14 @@ export default function OrdenesPage() {
                 name="delivery"
                 value={formData.delivery || ''}
                 onChange={handleInputChange}
-                className="bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+                className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
                 Cantidad de Items
               </label>
               <Input
@@ -418,12 +457,12 @@ export default function OrdenesPage() {
                 value={formData.items || ''}
                 onChange={handleInputChange}
                 placeholder="0"
-                className="bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+                className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
                 Total (₡)
               </label>
               <Input
@@ -433,20 +472,20 @@ export default function OrdenesPage() {
                 onChange={handleInputChange}
                 placeholder="0.00"
                 step="0.01"
-                className="bg-slate-800/50 border-purple-500/20 text-white placeholder:text-slate-500 focus:border-purple-500"
+                className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] placeholder:text-[var(--odin-text-secondary)] focus:border-purple-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
               Estado
             </label>
             <select
               name="status"
               value={formData.status || 'pending'}
               onChange={handleInputChange}
-              className="w-full bg-slate-800/50 border border-purple-500/20 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full bg-[var(--odin-input-bg)] border border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
             >
               <option value="pending">Pendiente</option>
               <option value="approved">Aprobada</option>
@@ -456,7 +495,7 @@ export default function OrdenesPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-[var(--odin-text-primary)] mb-2">
               Descripción
             </label>
             <textarea
@@ -465,7 +504,7 @@ export default function OrdenesPage() {
               onChange={handleInputChange}
               placeholder="Descripción de la orden de compra..."
               rows={3}
-              className="w-full bg-slate-800/50 border border-purple-500/20 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder:text-slate-500"
+              className="w-full bg-[var(--odin-input-bg)] border border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder:text-[var(--odin-text-secondary)]"
             />
           </div>
         </div>
@@ -480,7 +519,7 @@ export default function OrdenesPage() {
           <Button
             variant="outline"
             onClick={handleCloseViewModal}
-            className="border-purple-500/30 text-slate-300 hover:bg-purple-500/10"
+            className="border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] hover:bg-purple-500/10"
           >
             Cerrar
           </Button>
@@ -490,11 +529,11 @@ export default function OrdenesPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-slate-400 mb-1">ID de Orden</p>
-                <p className="text-white font-mono font-semibold">{viewingOrder.id}</p>
+                <p className="text-sm text-[var(--odin-text-secondary)] mb-1">ID de Orden</p>
+                <p className="text-[var(--odin-text-primary)] font-mono font-semibold">{viewingOrder.id}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-400 mb-1">Estado</p>
+                <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Estado</p>
                 <Badge className={getStatusColor(viewingOrder.status)}>
                   {getStatusText(viewingOrder.status)}
                 </Badge>
@@ -502,36 +541,36 @@ export default function OrdenesPage() {
             </div>
 
             <div>
-              <p className="text-sm text-slate-400 mb-1">Proveedor</p>
-              <p className="text-white font-medium">{viewingOrder.supplier}</p>
+              <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Proveedor</p>
+              <p className="text-[var(--odin-text-primary)] font-medium">{viewingOrder.supplier}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-slate-400 mb-1">Fecha de Orden</p>
-                <p className="text-white">{viewingOrder.date}</p>
+                <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Fecha de Orden</p>
+                <p className="text-[var(--odin-text-primary)]">{viewingOrder.date}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-400 mb-1">Fecha de Entrega</p>
-                <p className="text-white">{viewingOrder.delivery}</p>
+                <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Fecha de Entrega</p>
+                <p className="text-[var(--odin-text-primary)]">{viewingOrder.delivery}</p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-slate-400 mb-1">Cantidad de Items</p>
-                <p className="text-white font-semibold">{viewingOrder.items}</p>
+                <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Cantidad de Items</p>
+                <p className="text-[var(--odin-text-primary)] font-semibold">{viewingOrder.items}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-400 mb-1">Total</p>
-                <p className="text-white font-bold text-lg">{formatCurrency(viewingOrder.total)}</p>
+                <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Total</p>
+                <p className="text-[var(--odin-text-primary)] font-bold text-lg">{formatCurrency(viewingOrder.total)}</p>
               </div>
             </div>
 
             {viewingOrder.description && (
               <div>
-                <p className="text-sm text-slate-400 mb-1">Descripción</p>
-                <p className="text-white bg-slate-800/50 p-3 rounded-lg border border-purple-500/20">
+                <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Descripción</p>
+                <p className="text-[var(--odin-text-primary)] bg-[var(--odin-input-bg)] p-3 rounded-lg border border-[var(--odin-border-accent)]">
                   {viewingOrder.description}
                 </p>
               </div>
@@ -539,6 +578,6 @@ export default function OrdenesPage() {
           </div>
         )}
       </Modal>
-    </div>
+    </motion.div>
   );
 }

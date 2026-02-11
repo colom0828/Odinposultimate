@@ -25,20 +25,20 @@ export function AdminSidebar() {
       initial={{ x: -300, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 border-r border-purple-500/20 flex flex-col"
+      className="fixed left-0 top-0 h-screen w-64 bg-white dark:bg-gradient-to-b dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 border-r border-slate-200 dark:border-purple-500/20 flex flex-col shadow-xl transition-colors duration-300"
     >
       {/* Logo Header */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="h-20 flex items-center px-6 border-b border-purple-500/20"
+        className="h-20 flex items-center px-6 border-b border-slate-200 dark:border-purple-500/20"
       >
         <div className="flex items-center space-x-3">
           <OdinLogo size="sm" />
           <div>
-            <h1 className="text-lg font-bold text-white">ODIN POS</h1>
-            <p className="text-xs text-slate-400">Panel de administración</p>
+            <h1 className="text-lg font-bold text-slate-900 dark:text-white">ODIN POS</h1>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Panel de administración</p>
           </div>
         </div>
       </motion.div>
@@ -64,12 +64,12 @@ export function AdminSidebar() {
                 className={`
                   flex items-center space-x-3 px-3 py-3 rounded-xl transition-all duration-200
                   ${isActive 
-                    ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/50' 
-                    : 'text-slate-400 hover:bg-purple-500/10 hover:text-white'
+                    ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/20' 
+                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-900/5 dark:text-slate-400 dark:hover:text-white dark:hover:bg-purple-500/10'
                   }
                 `}
               >
-                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-600 dark:text-slate-400'}`} />
                 <span className="font-medium text-sm">{item.name}</span>
               </motion.a>
             </motion.div>
@@ -82,9 +82,9 @@ export function AdminSidebar() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.8 }}
-        className="p-4 border-t border-purple-500/20"
+        className="p-4 border-t border-slate-200 dark:border-purple-500/20"
       >
-        <div className="text-xs text-slate-500 text-center">
+        <div className="text-xs text-slate-600 dark:text-slate-500 text-center">
           <p>Versión 1.0.0</p>
         </div>
       </motion.div>

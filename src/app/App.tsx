@@ -7,18 +7,47 @@ import LoginPage from './(auth)/login/page';
 
 // Admin pages
 import DashboardPage from './(admin)/dashboard/page';
+import ProductosPage from './(admin)/productos/page';
 import InventarioPage from './(admin)/inventario/page';
 import ProveedoresPage from './(admin)/proveedores/page';
 import OrdenesPage from './(admin)/ordenes/page';
 import ImpresorasPage from './(admin)/impresoras/page';
 import CajaPage from './(admin)/caja/page';
+import VentasPage from './(admin)/ventas/page';
 import ClientesPage from './(admin)/clientes/page';
 import EmpleadosPage from './(admin)/empleados/page';
+import UsuariosPage from './(admin)/usuarios/page';
 import ConfiguracionPage from './(admin)/configuracion/page';
 
 // Layouts
 import { AdminSidebar } from './components/AdminSidebar';
 import { AdminHeader } from './components/AdminHeader';
+
+// Función para obtener el tema inicial de forma SÍNCRONA (antes del render)
+function getInitialTheme(): 'dark' | 'light' {
+  if (typeof window === 'undefined') return 'dark';
+  
+  const savedTheme = localStorage.getItem('odin-theme') as 'dark' | 'light' | null;
+  return savedTheme || 'dark';
+}
+
+// Aplicar tema al HTML de forma SÍNCRONA
+function applyThemeToDOM(theme: 'dark' | 'light') {
+  if (typeof window === 'undefined') return;
+  
+  if (theme === 'light') {
+    document.documentElement.classList.add('light-theme');
+    document.documentElement.classList.remove('dark');
+  } else {
+    document.documentElement.classList.remove('light-theme');
+    document.documentElement.classList.add('dark');
+  }
+}
+
+// Aplicar tema INMEDIATAMENTE al cargar (antes del render)
+if (typeof window !== 'undefined') {
+  applyThemeToDOM(getInitialTheme());
+}
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState('/auth/login');
@@ -46,9 +75,17 @@ export default function App() {
 
     document.addEventListener('click', handleClick);
 
+    // Escuchar eventos de cambio de tema
+    const handleThemeChange = (e: CustomEvent) => {
+      applyThemeToDOM(e.detail.theme);
+    };
+    
+    window.addEventListener('theme-change' as any, handleThemeChange);
+
     return () => {
       window.removeEventListener('popstate', handleNavigation);
       document.removeEventListener('click', handleClick);
+      window.removeEventListener('theme-change' as any, handleThemeChange);
     };
   }, []);
 
@@ -67,6 +104,9 @@ export default function App() {
         case '/admin/dashboard':
           PageComponent = DashboardPage;
           break;
+        case '/admin/productos':
+          PageComponent = ProductosPage;
+          break;
         case '/admin/inventario':
           PageComponent = InventarioPage;
           break;
@@ -82,11 +122,17 @@ export default function App() {
         case '/admin/caja':
           PageComponent = CajaPage;
           break;
+        case '/admin/ventas':
+          PageComponent = VentasPage;
+          break;
         case '/admin/clientes':
           PageComponent = ClientesPage;
           break;
         case '/admin/empleados':
           PageComponent = EmpleadosPage;
+          break;
+        case '/admin/usuarios':
+          PageComponent = UsuariosPage;
           break;
         case '/admin/configuracion':
           PageComponent = ConfiguracionPage;
@@ -96,7 +142,7 @@ export default function App() {
       }
 
       return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <div className="min-h-screen bg-[#F5F7FB] text-slate-900 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-white transition-colors duration-300">
           {/* Sidebar - FIXED */}
           <AdminSidebar />
 
@@ -105,8 +151,8 @@ export default function App() {
             {/* Header - STICKY */}
             <AdminHeader />
 
-            {/* Content area - SCROLLABLE */}
-            <main className="p-6">
+            {/* Content area - SCROLLABLE - Fondo TRANSPARENTE */}
+            <main className="p-6 bg-transparent">
               <PageComponent />
             </main>
           </div>

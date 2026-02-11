@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Plus, Printer, CheckCircle, XCircle, AlertCircle, Trash2, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { Button } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
@@ -87,12 +87,28 @@ export default function ImpresorasPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Impresoras</h1>
-          <p className="text-slate-400">Gestión de dispositivos de impresión</p>
-        </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        <h1 className="text-3xl font-bold text-[var(--odin-text-primary)] mb-2">Impresoras</h1>
+        <p className="text-[var(--odin-text-secondary)]">Gestión de impresoras conectadas al sistema</p>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+        className="flex items-center justify-between"
+      >
         <div className="flex gap-3">
           <Button 
             onClick={() => setShowModal(true)}
@@ -112,34 +128,44 @@ export default function ImpresorasPage() {
             </Button>
           )}
         </div>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-gradient-to-br from-slate-900/50 to-green-900/20 border-green-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">En Línea</p>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.3 }}
+        className="grid grid-cols-1 md:grid-cols-3 gap-4"
+      >
+        <Card className="bg-[var(--odin-bg-card)] border-green-500/20 p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">En Línea</p>
           <p className="text-2xl font-bold text-green-400">{printers.filter(p => p.status === 'online').length}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-slate-900/50 to-red-900/20 border-red-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Fuera de Línea</p>
+        <Card className="bg-[var(--odin-bg-card)] border-red-500/20 p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Fuera de Línea</p>
           <p className="text-2xl font-bold text-red-400">{printers.filter(p => p.status === 'offline').length}</p>
         </Card>
-        <Card className="bg-gradient-to-br from-slate-900/50 to-yellow-900/20 border-yellow-500/20 p-4 backdrop-blur-sm">
-          <p className="text-sm text-slate-400 mb-1">Con Advertencias</p>
+        <Card className="bg-[var(--odin-bg-card)] border-yellow-500/20 p-4 backdrop-blur-sm transition-colors duration-300">
+          <p className="text-sm text-[var(--odin-text-secondary)] mb-1">Con Advertencias</p>
           <p className="text-2xl font-bold text-yellow-400">{printers.filter(p => p.status === 'warning').length}</p>
         </Card>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.4 }}
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+      >
         {printers.map((printer) => (
-          <Card key={printer.id} className="bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-purple-500/20 p-6 backdrop-blur-sm hover:border-purple-500/40 transition-all">
+          <Card key={printer.id} className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] p-6 backdrop-blur-sm hover:border-purple-500/40 transition-all">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-orange-500 flex items-center justify-center">
                   <Printer className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">{printer.name}</h3>
-                  <p className="text-sm text-slate-400">{printer.model}</p>
+                  <h3 className="font-semibold text-[var(--odin-text-primary)]">{printer.name}</h3>
+                  <p className="text-sm text-[var(--odin-text-secondary)]">{printer.model}</p>
                 </div>
               </div>
               {getStatusIcon(printer.status)}
@@ -147,15 +173,15 @@ export default function ImpresorasPage() {
 
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-slate-400">Dirección IP</span>
-                <span className="text-sm text-white font-mono">{printer.ip}</span>
+                <span className="text-sm text-[var(--odin-text-secondary)]">Dirección IP</span>
+                <span className="text-sm text-[var(--odin-text-primary)] font-mono">{printer.ip}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-slate-400">Ubicación</span>
-                <span className="text-sm text-white">{printer.location}</span>
+                <span className="text-sm text-[var(--odin-text-secondary)]">Ubicación</span>
+                <span className="text-sm text-[var(--odin-text-primary)]">{printer.location}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-slate-400">Estado</span>
+                <span className="text-sm text-[var(--odin-text-secondary)]">Estado</span>
                 <Badge className={
                   printer.status === 'online' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
                   printer.status === 'offline' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
@@ -166,20 +192,20 @@ export default function ImpresorasPage() {
               </div>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-purple-500/20 flex gap-2">
-              <Button size="sm" variant="outline" className="flex-1 border-purple-500/30 bg-slate-800/50 text-slate-300 hover:bg-purple-500/20 hover:border-purple-500/50">
+            <div className="mt-4 pt-4 border-t border-[var(--odin-border-accent)] flex gap-2">
+              <Button size="sm" variant="outline" className="flex-1 border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/20 hover:border-purple-500/50">
                 Probar
               </Button>
-              <Button size="sm" variant="outline" className="flex-1 border-purple-500/30 bg-slate-800/50 text-slate-300 hover:bg-purple-500/20 hover:border-purple-500/50">
+              <Button size="sm" variant="outline" className="flex-1 border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/20 hover:border-purple-500/50">
                 Configurar
               </Button>
-              <Button size="sm" variant="outline" className="flex-1 border-purple-500/30 bg-slate-800/50 text-slate-300 hover:bg-purple-500/20 hover:border-purple-500/50" onClick={() => handleDeletePrinter(printer.id)}>
+              <Button size="sm" variant="outline" className="flex-1 border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/20 hover:border-purple-500/50" onClick={() => handleDeletePrinter(printer.id)}>
                 <Trash2 className="w-5 h-5" />
               </Button>
             </div>
           </Card>
         ))}
-      </div>
+      </motion.div>
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
@@ -407,6 +433,6 @@ export default function ImpresorasPage() {
           </Card>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

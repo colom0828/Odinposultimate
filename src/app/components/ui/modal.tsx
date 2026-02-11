@@ -21,13 +21,13 @@ export function Modal({ isOpen, onClose, title, children, footer }: ModalProps) 
       />
       
       {/* Modal */}
-      <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-purple-500/30 rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden">
+      <div className="relative bg-[var(--odin-bg-card)] border border-[var(--odin-border-accent)] rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden backdrop-blur-xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-purple-500/20">
-          <h2 className="text-2xl font-bold text-white">{title}</h2>
+        <div className="flex items-center justify-between p-6 border-b border-[var(--odin-border)]">
+          <h2 className="text-2xl font-bold text-[var(--odin-text-primary)]">{title}</h2>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white hover:bg-purple-500/10 rounded-lg transition-colors"
+            className="p-2 text-[var(--odin-text-secondary)] hover:text-[var(--odin-text-primary)] hover:bg-purple-500/10 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -40,7 +40,7 @@ export function Modal({ isOpen, onClose, title, children, footer }: ModalProps) 
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end space-x-3 p-6 border-t border-purple-500/20 bg-slate-900/50">
+          <div className="flex items-center justify-end space-x-3 p-6 border-t border-[var(--odin-border)] bg-[var(--odin-input-bg)]">
             {footer}
           </div>
         )}
