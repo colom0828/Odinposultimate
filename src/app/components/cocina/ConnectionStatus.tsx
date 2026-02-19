@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import * as LucideIcons from 'lucide-react';
+import { Wifi, WifiOff } from 'lucide-react';
 
 type ConnectionState = 'connected' | 'reconnecting' | 'disconnected';
 
@@ -22,7 +22,7 @@ export function ConnectionStatus({ apiUrl }: ConnectionStatusProps) {
 
   const statusConfig = {
     connected: {
-      icon: LucideIcons.Wifi,
+      icon: Wifi,
       color: 'text-green-400',
       bg: 'bg-green-500/10',
       border: 'border-green-500/30',
@@ -30,7 +30,7 @@ export function ConnectionStatus({ apiUrl }: ConnectionStatusProps) {
       description: 'Recibiendo órdenes en tiempo real',
     },
     reconnecting: {
-      icon: LucideIcons.WifiOff,
+      icon: WifiOff,
       color: 'text-yellow-400',
       bg: 'bg-yellow-500/10',
       border: 'border-yellow-500/30',
@@ -38,7 +38,7 @@ export function ConnectionStatus({ apiUrl }: ConnectionStatusProps) {
       description: 'Intentando reconectar con el servidor...',
     },
     disconnected: {
-      icon: LucideIcons.WifiOff,
+      icon: WifiOff,
       color: 'text-red-400',
       bg: 'bg-red-500/10',
       border: 'border-red-500/30',

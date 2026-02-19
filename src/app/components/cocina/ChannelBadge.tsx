@@ -1,6 +1,6 @@
 'use client';
 
-import * as LucideIcons from 'lucide-react';
+import { Laptop, MonitorCheck, Code2, Globe, Smartphone } from 'lucide-react';
 
 type Channel = 'ODIN' | 'POS_EXTERNO' | 'API' | 'WEB' | 'MOBILE';
 
@@ -13,35 +13,35 @@ export function ChannelBadge({ channel, size = 'sm' }: ChannelBadgeProps) {
   const channelConfig = {
     ODIN: {
       label: 'ODIN',
-      icon: LucideIcons.Laptop,
+      icon: Laptop,
       color: 'text-blue-400',
       bg: 'bg-blue-500/10',
       border: 'border-blue-500/30',
     },
     POS_EXTERNO: {
       label: 'POS',
-      icon: LucideIcons.MonitorCheck,
+      icon: MonitorCheck,
       color: 'text-purple-400',
       bg: 'bg-purple-500/10',
       border: 'border-purple-500/30',
     },
     API: {
       label: 'API',
-      icon: LucideIcons.Code2,
+      icon: Code2,
       color: 'text-green-400',
       bg: 'bg-green-500/10',
       border: 'border-green-500/30',
     },
     WEB: {
       label: 'WEB',
-      icon: LucideIcons.Globe,
+      icon: Globe,
       color: 'text-orange-400',
       bg: 'bg-orange-500/10',
       border: 'border-orange-500/30',
     },
     MOBILE: {
       label: 'APP',
-      icon: LucideIcons.Smartphone,
+      icon: Smartphone,
       color: 'text-pink-400',
       bg: 'bg-pink-500/10',
       border: 'border-pink-500/30',

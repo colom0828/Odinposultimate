@@ -60,9 +60,18 @@ if (typeof window !== 'undefined') {
 }
 
 export default function App() {
-  const [currentPath, setCurrentPath] = useState('/auth/login');
+  // Inicializar con la ruta actual del navegador en lugar de hardcodear
+  const [currentPath, setCurrentPath] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.location.pathname;
+    }
+    return '/auth/login';
+  });
 
   useEffect(() => {
+    // Forzar sincronización con la URL actual al montar (importante para Figma Sites)
+    setCurrentPath(window.location.pathname);
+    
     // Simular navegación con eventos personalizados
     const handleNavigation = () => {
       setCurrentPath(window.location.pathname);
@@ -178,13 +187,15 @@ export default function App() {
           <AdminSidebar />
 
           {/* Main content area - with left margin for sidebar */}
-          <div className="ml-64">
+          <div className="ml-64 min-h-screen">
             {/* Header - STICKY */}
             <AdminHeader />
 
-            {/* Content area - SCROLLABLE - Fondo TRANSPARENTE */}
-            <main className="p-6 bg-transparent">
-              <PageComponent />
+            {/* Content area - SCROLLABLE - Fondo TRANSPARENTE con altura mínima explícita */}
+            <main className="p-6 bg-transparent min-h-[calc(100vh-73px)]">
+              <div className="w-full h-full">
+                <PageComponent />
+              </div>
             </main>
           </div>
 

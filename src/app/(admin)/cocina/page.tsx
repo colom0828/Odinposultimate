@@ -1,8 +1,18 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'motion/react';
-import * as LucideIcons from 'lucide-react';
+import { 
+  ChefHat,
+  Utensils,
+  Bike,
+  Bell,
+  CheckCircle,
+  LayoutGrid,
+  Flame,
+  AlertTriangle,
+  AlertCircle
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { KitchenBoardUnified } from '../../components/cocina/KitchenBoardUnified';
 import { DeliveredOrdersPanelUnified } from '../../components/cocina/DeliveredOrdersPanelUnified';
@@ -36,6 +46,17 @@ export default function CocinaPage() {
   const [orderToCancel, setOrderToCancel] = useState<{ id: string; orderNumber: string } | null>(null);
   const [cancelReason, setCancelReason] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<FilterType>('TODAS');
+
+  // Debug: verificar que el componente se monte correctamente
+  useEffect(() => {
+    console.log('✅ CocinaPage mounted successfully');
+    console.log('📊 Orders count:', allOrders?.length ?? 0);
+    console.log('🌐 Current URL:', window.location.href);
+    console.log('📍 Pathname:', window.location.pathname);
+    return () => {
+      console.log('❌ CocinaPage unmounted');
+    };
+  }, []);
 
   // Filtrar órdenes para cocina (todas las órdenes activas excepto ENTREGADA y canceladas)
   const orders = useMemo(() => {
@@ -117,7 +138,7 @@ export default function CocinaPage() {
     // Toast con feedback
     toast.success(
       <div className="flex items-center space-x-2">
-        <LucideIcons.Bike className="w-4 h-4" />
+        <Bike className="w-4 h-4" />
         <div>
           <p className="font-semibold">Orden {order?.orderNumber} enviada a Delivery</p>
           <p className="text-xs text-slate-400">Marcada como entregada y lista para repartidor</p>
@@ -142,7 +163,7 @@ export default function CocinaPage() {
           <div className="flex items-center space-x-4">
             {/* Logo de Cocina */}
             <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center shadow-xl shadow-orange-500/50">
-              <LucideIcons.ChefHat className="w-8 h-8 text-white" />
+              <ChefHat className="w-8 h-8 text-white" />
             </div>
             
             {/* Título */}
@@ -165,7 +186,7 @@ export default function CocinaPage() {
               onClick={createMockMesaOrder}
               className="flex items-center space-x-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:shadow-lg hover:shadow-blue-500/50 font-semibold transition-all"
             >
-              <LucideIcons.Utensils className="w-5 h-5" />
+              <Utensils className="w-5 h-5" />
               <span>Simular Mesa</span>
             </button>
 
@@ -173,7 +194,7 @@ export default function CocinaPage() {
               onClick={createMockDeliveryOrder}
               className="flex items-center space-x-2 px-6 py-3 rounded-xl bg-gradient-to-r from-orange-600 to-orange-700 text-white hover:shadow-lg hover:shadow-orange-500/50 font-semibold transition-all"
             >
-              <LucideIcons.Bike className="w-5 h-5" />
+              <Bike className="w-5 h-5" />
               <span>Simular Delivery</span>
             </button>
           </div>
@@ -193,7 +214,7 @@ export default function CocinaPage() {
                 <p className="text-purple-100 text-sm font-medium mb-2">Nuevas</p>
                 <p className="text-5xl font-bold text-white">{stats.nuevas}</p>
               </div>
-              <LucideIcons.Bell className="w-12 h-12 text-purple-200/50" />
+              <Bell className="w-12 h-12 text-purple-200/50" />
             </div>
           </div>
 
@@ -204,7 +225,7 @@ export default function CocinaPage() {
                 <p className="text-orange-100 text-sm font-medium mb-2">En Preparación</p>
                 <p className="text-5xl font-bold text-white">{stats.preparando}</p>
               </div>
-              <LucideIcons.ChefHat className="w-12 h-12 text-orange-200/50" />
+              <Flame className="w-12 h-12 text-orange-200/50" />
             </div>
           </div>
 
@@ -215,7 +236,7 @@ export default function CocinaPage() {
                 <p className="text-green-100 text-sm font-medium mb-2">Completadas Hoy</p>
                 <p className="text-5xl font-bold text-white">{stats.completadas}</p>
               </div>
-              <LucideIcons.CheckCircle className="w-12 h-12 text-green-200/50" />
+              <CheckCircle className="w-12 h-12 text-green-200/50" />
             </div>
           </div>
 
@@ -226,7 +247,7 @@ export default function CocinaPage() {
                 <p className="text-slate-300 text-sm font-medium mb-2">Total Activas</p>
                 <p className="text-5xl font-bold text-white">{stats.total}</p>
               </div>
-              <LucideIcons.LayoutGrid className="w-12 h-12 text-slate-500/50" />
+              <LayoutGrid className="w-12 h-12 text-slate-500/50" />
             </div>
           </div>
         </motion.div>
@@ -246,7 +267,7 @@ export default function CocinaPage() {
                 : 'bg-secondary text-muted-foreground hover:bg-accent hover:text-foreground'
             }`}
           >
-            <LucideIcons.LayoutGrid className="w-4 h-4" />
+            <LayoutGrid className="w-4 h-4" />
             <span>Todas</span>
             <span className="ml-1 px-2 py-0.5 rounded-full bg-slate-600 dark:bg-slate-600 text-white text-xs font-bold">
               {stats.total}
@@ -261,7 +282,7 @@ export default function CocinaPage() {
                 : 'bg-secondary text-muted-foreground hover:bg-accent hover:text-foreground'
             }`}
           >
-            <LucideIcons.Bell className="w-4 h-4" />
+            <Bell className="w-4 h-4" />
             <span>Nueva</span>
             <span className="ml-1 px-2 py-0.5 rounded-full bg-purple-600 text-white text-xs font-bold">
               {stats.nuevas}
@@ -276,7 +297,7 @@ export default function CocinaPage() {
                 : 'bg-secondary text-muted-foreground hover:bg-accent hover:text-foreground'
             }`}
           >
-            <LucideIcons.Flame className="w-4 h-4" />
+            <Flame className="w-4 h-4" />
             <span>En Preparación</span>
             <span className="ml-1 px-2 py-0.5 rounded-full bg-orange-600 text-white text-xs font-bold">
               {stats.preparando}
@@ -318,7 +339,7 @@ export default function CocinaPage() {
           <AlertDialogHeader>
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
-                <LucideIcons.AlertTriangle className="w-5 h-5 text-red-500" />
+                <AlertTriangle className="w-5 h-5 text-red-500" />
               </div>
               <AlertDialogTitle className="text-xl text-white">
                 Cancelar Orden #{orderToCancel?.orderNumber}
@@ -375,7 +396,7 @@ export default function CocinaPage() {
                     </p>
                     {!cancelReason.trim() && (
                       <div className="flex items-center space-x-1 text-red-400">
-                        <LucideIcons.AlertCircle className="w-3 h-3" />
+                        <AlertCircle className="w-3 h-3" />
                         <p className="text-xs font-medium">Esta acción no se puede deshacer.</p>
                       </div>
                     )}

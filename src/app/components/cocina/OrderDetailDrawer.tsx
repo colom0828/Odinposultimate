@@ -1,9 +1,41 @@
 'use client';
 
 import { motion, AnimatePresence } from 'motion/react';
-import * as LucideIcons from 'lucide-react';
+import { 
+  X, 
+  Clock, 
+  MapPin, 
+  Phone, 
+  User, 
+  CreditCard,
+  CheckCircle2, 
+  AlertTriangle, 
+  XCircle,
+  Bell,
+  ChefHat,
+  CheckCircle,
+  Utensils,
+  ShoppingBag,
+  Bike,
+  ShoppingCart,
+  AlertCircle,
+  MessageSquare,
+  Network,
+  RotateCw
+} from 'lucide-react';
 import { Order, ORDER_TYPE_CONFIG, KITCHEN_STATUS_CONFIG } from '../../types/orders.types';
 import { ChannelBadge } from './ChannelBadge';
+
+// Mapa de iconos para renderizado dinámico
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Bell,
+  ChefHat,
+  CheckCircle,
+  CheckCircle2,
+  Utensils,
+  ShoppingBag,
+  Bike,
+};
 
 interface OrderDetailDrawerProps {
   order: Order | null;
@@ -16,8 +48,8 @@ export function OrderDetailDrawer({ order, isOpen, onClose }: OrderDetailDrawerP
 
   const typeConfig = ORDER_TYPE_CONFIG[order.type];
   const statusConfig = KITCHEN_STATUS_CONFIG[order.kitchenStatus];
-  const TypeIcon = LucideIcons[typeConfig.icon as keyof typeof LucideIcons] as React.ComponentType<{ className?: string }>;
-  const StatusIcon = LucideIcons[statusConfig.icon as keyof typeof LucideIcons] as React.ComponentType<{ className?: string }>;
+  const TypeIcon = ICON_MAP[typeConfig.icon] || Utensils;
+  const StatusIcon = ICON_MAP[statusConfig.icon] || Bell;
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -41,21 +73,21 @@ export function OrderDetailDrawer({ order, isOpen, onClose }: OrderDetailDrawerP
 
     const config = {
       SYNCED: {
-        icon: LucideIcons.CheckCircle2,
+        icon: CheckCircle2,
         color: 'text-green-400',
         bg: 'bg-green-500/10',
         border: 'border-green-500/30',
         label: 'Sincronizado',
       },
       PENDING: {
-        icon: LucideIcons.Clock,
+        icon: Clock,
         color: 'text-yellow-400',
         bg: 'bg-yellow-500/10',
         border: 'border-yellow-500/30',
         label: 'Pendiente de sync',
       },
       FAILED: {
-        icon: LucideIcons.AlertTriangle,
+        icon: AlertTriangle,
         color: 'text-red-400',
         bg: 'bg-red-500/10',
         border: 'border-red-500/30',
@@ -119,7 +151,7 @@ export function OrderDetailDrawer({ order, isOpen, onClose }: OrderDetailDrawerP
                   onClick={onClose}
                   className="p-2 rounded-xl bg-secondary hover:bg-accent text-muted-foreground hover:text-foreground transition-all"
                 >
-                  <LucideIcons.X className="w-5 h-5" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
             </div>
@@ -167,7 +199,7 @@ export function OrderDetailDrawer({ order, isOpen, onClose }: OrderDetailDrawerP
               {/* Items */}
               <div>
                 <div className="flex items-center space-x-2 mb-3">
-                  <LucideIcons.ShoppingCart className="w-4 h-4 text-green-400" />
+                  <ShoppingCart className="w-4 h-4 text-green-400" />
                   <h3 className="text-sm font-semibold text-foreground">Productos</h3>
                 </div>
                 <div className="space-y-2">
@@ -181,7 +213,7 @@ export function OrderDetailDrawer({ order, isOpen, onClose }: OrderDetailDrawerP
                           <p className="text-sm font-medium text-foreground">{item.name}</p>
                           {item.notes && (
                             <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
-                              <LucideIcons.AlertCircle className="w-3 h-3 inline mr-1" />
+                              <AlertCircle className="w-3 h-3 inline mr-1" />
                               {item.notes}
                             </p>
                           )}
@@ -197,7 +229,7 @@ export function OrderDetailDrawer({ order, isOpen, onClose }: OrderDetailDrawerP
               {order.notes && (
                 <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
                   <div className="flex items-start space-x-2">
-                    <LucideIcons.MessageSquare className="w-4 h-4 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
+                    <MessageSquare className="w-4 h-4 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="text-xs font-semibold text-yellow-600 dark:text-yellow-400 mb-1">Notas:</p>
                       <p className="text-sm text-yellow-700 dark:text-yellow-300">{order.notes}</p>
@@ -210,7 +242,7 @@ export function OrderDetailDrawer({ order, isOpen, onClose }: OrderDetailDrawerP
               {order.integration && (
                 <div className="bg-secondary/50 rounded-xl p-4 border border-border">
                   <div className="flex items-center space-x-2 mb-3">
-                    <LucideIcons.Network className="w-4 h-4 text-blue-400" />
+                    <Network className="w-4 h-4 text-blue-400" />
                     <h3 className="text-sm font-semibold text-foreground">Datos de Integración</h3>
                   </div>
 
@@ -256,7 +288,7 @@ export function OrderDetailDrawer({ order, isOpen, onClose }: OrderDetailDrawerP
                         <p className="text-xs text-red-600 dark:text-red-400 mb-1">Error:</p>
                         <p className="text-sm text-red-700 dark:text-red-300">{order.integration.failedReason}</p>
                         <button className="mt-2 flex items-center space-x-1 text-xs font-semibold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors">
-                          <LucideIcons.RotateCw className="w-3 h-3" />
+                          <RotateCw className="w-3 h-3" />
                           <span>Reintentar sincronización</span>
                         </button>
                       </div>
@@ -268,7 +300,7 @@ export function OrderDetailDrawer({ order, isOpen, onClose }: OrderDetailDrawerP
               {/* Timestamps */}
               <div className="bg-secondary/50 rounded-xl p-4 border border-border">
                 <div className="flex items-center space-x-2 mb-3">
-                  <LucideIcons.Clock className="w-4 h-4 text-purple-400" />
+                  <Clock className="w-4 h-4 text-purple-400" />
                   <h3 className="text-sm font-semibold text-foreground">Historial</h3>
                 </div>
                 <div className="space-y-2 text-xs">

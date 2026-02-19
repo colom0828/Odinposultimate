@@ -2,9 +2,16 @@
 
 import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import * as LucideIcons from 'lucide-react';
+import { Bell, ChefHat, CheckCircle } from 'lucide-react';
 import { Order, KitchenStatus, KITCHEN_STATUS_CONFIG } from '../../types/orders.types';
 import { KitchenOrderCard } from './KitchenOrderCard';
+
+// Mapa de iconos para renderizado dinámico
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Bell,
+  ChefHat,
+  CheckCircle,
+};
 
 interface KitchenBoardUnifiedProps {
   orders: Order[];
@@ -38,7 +45,7 @@ export function KitchenBoardUnified({ orders, onStatusChange, onMarkAsDelivered,
         <div className="grid grid-cols-3 gap-4">
           {columns.map(({ status, orders: columnOrders }) => {
             const config = KITCHEN_STATUS_CONFIG[status];
-            const Icon = LucideIcons[config.icon as keyof typeof LucideIcons] as React.ComponentType<{ className?: string }>;
+            const Icon = ICON_MAP[config.icon] || Bell;
 
             return (
               <div key={status} className="flex flex-col">
@@ -96,7 +103,7 @@ export function KitchenBoardUnified({ orders, onStatusChange, onMarkAsDelivered,
       <div className="lg:hidden space-y-6">
         {columns.map(({ status, orders: columnOrders }) => {
           const config = KITCHEN_STATUS_CONFIG[status];
-          const Icon = LucideIcons[config.icon as keyof typeof LucideIcons] as React.ComponentType<{ className?: string }>;
+          const Icon = ICON_MAP[config.icon] || Bell;
 
           return (
             <div key={status}>
@@ -115,13 +122,14 @@ export function KitchenBoardUnified({ orders, onStatusChange, onMarkAsDelivered,
 
               {/* Órdenes */}
               <div className="space-y-4">
-                <AnimatePresence mode="popLayout">
+                <AnimatePresence initial={false}>
                   {columnOrders.length === 0 ? (
                     <motion.div
                       key="empty"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
+                      transition={{ duration: 0.15 }}
                       className="flex flex-col items-center justify-center p-8 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700"
                     >
                       <Icon className="w-12 h-12 text-slate-300 dark:text-slate-600 mb-3" />

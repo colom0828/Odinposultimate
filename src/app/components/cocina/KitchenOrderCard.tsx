@@ -2,7 +2,22 @@
 
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import * as LucideIcons from 'lucide-react';
+import { 
+  AlertTriangle,
+  MessageSquare,
+  Clock,
+  Info,
+  XCircle,
+  Play,
+  Check,
+  CheckCircle2,
+  Bike,
+  Bell,
+  ChefHat,
+  CheckCircle,
+  Utensils,
+  ShoppingBag
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { 
   Order,
@@ -14,6 +29,17 @@ import {
 } from '../../types/orders.types';
 import { ChannelBadge } from './ChannelBadge';
 import { OrderDetailDrawer } from './OrderDetailDrawer';
+
+// Mapa de iconos para renderizado dinámico
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Bell,
+  ChefHat,
+  CheckCircle,
+  CheckCircle2,
+  Utensils,
+  ShoppingBag,
+  Bike,
+};
 
 interface KitchenOrderCardProps {
   order: Order;
@@ -27,8 +53,8 @@ export function KitchenOrderCard({ order, onStatusChange, onMarkAsDelivered, onS
   const [showDetailDrawer, setShowDetailDrawer] = useState(false);
   const statusConfig = KITCHEN_STATUS_CONFIG[order.kitchenStatus];
   const typeConfig = ORDER_TYPE_CONFIG[order.type];
-  const StatusIcon = LucideIcons[statusConfig.icon as keyof typeof LucideIcons] as React.ComponentType<{ className?: string }>;
-  const TypeIcon = LucideIcons[typeConfig.icon as keyof typeof LucideIcons] as React.ComponentType<{ className?: string }>;
+  const StatusIcon = ICON_MAP[statusConfig.icon] || Bell;
+  const TypeIcon = ICON_MAP[typeConfig.icon] || Utensils;
 
   // Calcular tiempo transcurrido
   const getTimeElapsed = () => {
@@ -60,7 +86,7 @@ export function KitchenOrderCard({ order, onStatusChange, onMarkAsDelivered, onS
       case KitchenStatus.NUEVA:
         actions.push({
           label: 'Iniciar',
-          icon: LucideIcons.Play,
+          icon: Play,
           onClick: () => onStatusChange(order.id, KitchenStatus.PREPARANDO),
           color: 'bg-yellow-600 hover:bg-yellow-700',
         });
@@ -69,7 +95,7 @@ export function KitchenOrderCard({ order, onStatusChange, onMarkAsDelivered, onS
       case KitchenStatus.PREPARANDO:
         actions.push({
           label: 'Marcar Lista',
-          icon: LucideIcons.Check,
+          icon: Check,
           onClick: () => onStatusChange(order.id, KitchenStatus.LISTA),
           color: 'bg-green-600 hover:bg-green-700',
         });
@@ -98,7 +124,7 @@ export function KitchenOrderCard({ order, onStatusChange, onMarkAsDelivered, onS
             <span className="text-white/90 font-bold text-lg">{order.orderNumber}</span>
             {isUrgent() && (
               <div className="flex items-center space-x-1 bg-red-600 px-2 py-1 rounded-lg animate-pulse">
-                <LucideIcons.AlertTriangle className="w-3 h-3 text-white" />
+                <AlertTriangle className="w-3 h-3 text-white" />
                 <span className="text-xs font-bold text-white">URGENTE</span>
               </div>
             )}
@@ -151,7 +177,7 @@ export function KitchenOrderCard({ order, onStatusChange, onMarkAsDelivered, onS
         {order.notes && (
           <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded-xl border border-yellow-200 dark:border-yellow-900/30">
             <div className="flex items-start space-x-2">
-              <LucideIcons.MessageSquare className="w-4 h-4 text-yellow-600 dark:text-yellow-400 mt-0.5" />
+              <MessageSquare className="w-4 h-4 text-yellow-600 dark:text-yellow-400 mt-0.5" />
               <p className="text-sm text-yellow-900 dark:text-yellow-300">
                 {order.notes}
               </p>
@@ -170,7 +196,7 @@ export function KitchenOrderCard({ order, onStatusChange, onMarkAsDelivered, onS
             {/* Indicador de sync fallido */}
             {order.integration?.syncStatus === 'FAILED' && (
               <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded bg-red-500/10 border border-red-500/30">
-                <LucideIcons.AlertTriangle className="w-2.5 h-2.5 text-red-400" />
+                <AlertTriangle className="w-2.5 h-2.5 text-red-400" />
                 <span className="text-[10px] font-bold text-red-400">SYNC</span>
               </div>
             )}
@@ -178,14 +204,14 @@ export function KitchenOrderCard({ order, onStatusChange, onMarkAsDelivered, onS
             {/* Indicador de pendiente de sync */}
             {order.integration?.syncStatus === 'PENDING' && (
               <div className="flex items-center space-x-1 px-1.5 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/30">
-                <LucideIcons.Clock className="w-2.5 h-2.5 text-yellow-400 animate-pulse" />
+                <Clock className="w-2.5 h-2.5 text-yellow-400 animate-pulse" />
                 <span className="text-[10px] font-bold text-yellow-400">SYNC</span>
               </div>
             )}
           </div>
           
           <div className="flex items-center space-x-2 text-slate-600 dark:text-slate-400">
-            <LucideIcons.Clock className="w-4 h-4" />
+            <Clock className="w-4 h-4" />
             <span className="text-sm">{getTimeElapsed()}</span>
           </div>
         </div>
@@ -215,7 +241,7 @@ export function KitchenOrderCard({ order, onStatusChange, onMarkAsDelivered, onS
                 onClick={() => onMarkAsDelivered(order.id)}
                 className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 hover:shadow-lg hover:shadow-green-500/50 text-white font-semibold transition-all"
               >
-                <LucideIcons.CheckCircle2 className="w-4 h-4" />
+                <CheckCircle2 className="w-4 h-4" />
                 <span>Marcar como Entregada</span>
               </button>
             )}
@@ -226,7 +252,7 @@ export function KitchenOrderCard({ order, onStatusChange, onMarkAsDelivered, onS
                 onClick={() => onSendToDelivery(order.id)}
                 className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-orange-600 to-orange-700 hover:shadow-lg hover:shadow-orange-500/50 text-white font-semibold transition-all"
               >
-                <LucideIcons.Bike className="w-4 h-4" />
+                <Bike className="w-4 h-4" />
                 <span>Enviar a Delivery</span>
               </button>
             )}
@@ -238,7 +264,7 @@ export function KitchenOrderCard({ order, onStatusChange, onMarkAsDelivered, onS
           onClick={() => setShowDetailDrawer(true)}
           className="w-full flex items-center justify-center space-x-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 transition-all"
         >
-          <LucideIcons.Info className="w-4 h-4" />
+          <Info className="w-4 h-4" />
           <span className="font-medium text-sm">Ver Detalles</span>
         </button>
 
@@ -248,7 +274,7 @@ export function KitchenOrderCard({ order, onStatusChange, onMarkAsDelivered, onS
             onClick={() => onCancelOrder(order.id)}
             className="w-full flex items-center justify-center space-x-2 px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/40 border border-red-200 dark:border-red-900/30 transition-all"
           >
-            <LucideIcons.XCircle className="w-4 h-4" />
+            <XCircle className="w-4 h-4" />
             <span className="font-medium text-sm">Cancelar Orden</span>
           </button>
         )}

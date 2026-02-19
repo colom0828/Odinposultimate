@@ -2,7 +2,19 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import * as LucideIcons from 'lucide-react';
+import { 
+  CheckCircle2, 
+  ChevronDown, 
+  ChevronUp, 
+  Trash2, 
+  Clock, 
+  Utensils, 
+  ShoppingBag, 
+  Bike,
+  Archive,
+  PackageCheck,
+  CheckCircle
+} from 'lucide-react';
 import { Order, ORDER_TYPE_CONFIG } from '../../types/orders.types';
 import {
   AlertDialog,
@@ -14,6 +26,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../ui/alert-dialog';
+
+// Mapa de iconos para renderizado dinámico
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Utensils,
+  ShoppingBag,
+  Bike,
+};
 
 interface DeliveredOrdersPanelUnifiedProps {
   orders: Order[];
@@ -68,7 +87,7 @@ export function DeliveredOrdersPanelUnified({
         >
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center">
-              <LucideIcons.Archive className="w-6 h-6 text-muted-foreground" />
+              <Archive className="w-6 h-6 text-muted-foreground" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-foreground">
@@ -84,7 +103,7 @@ export function DeliveredOrdersPanelUnified({
             animate={{ rotate: isExpanded ? 180 : 0 }}
             transition={{ duration: 0.3 }}
           >
-            <LucideIcons.ChevronDown className="w-6 h-6 text-muted-foreground" />
+            <ChevronDown className="w-6 h-6 text-muted-foreground" />
           </motion.div>
         </div>
       </div>
@@ -101,7 +120,7 @@ export function DeliveredOrdersPanelUnified({
           >
             {orders.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 bg-slate-100 dark:bg-slate-900/50 rounded-2xl">
-                <LucideIcons.PackageCheck className="w-16 h-16 text-slate-400 mb-4" />
+                <PackageCheck className="w-16 h-16 text-slate-400 mb-4" />
                 <p className="text-lg text-slate-600 dark:text-slate-400">
                   No hay órdenes entregadas
                 </p>
@@ -110,15 +129,15 @@ export function DeliveredOrdersPanelUnified({
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {orders.map((order) => {
                   const typeConfig = ORDER_TYPE_CONFIG[order.type];
-                  const TypeIcon = LucideIcons[typeConfig.icon as keyof typeof LucideIcons] as React.ComponentType<{ className?: string }>;
+                  const TypeIcon = ICON_MAP[typeConfig.icon] || Utensils;
 
                   return (
                     <motion.div
                       key={order.id}
-                      layout
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
                       className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 hover:shadow-lg transition-shadow"
                     >
                       {/* Header */}
@@ -141,7 +160,7 @@ export function DeliveredOrdersPanelUnified({
                           onClick={() => handleDeleteClick(order.id)}
                           className="p-2 rounded-lg bg-red-100 hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors"
                         >
-                          <LucideIcons.Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
 
@@ -183,7 +202,7 @@ export function DeliveredOrdersPanelUnified({
                       {/* Badge de completado */}
                       <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
                         <div className="flex items-center justify-center space-x-1 text-green-600 dark:text-green-400">
-                          <LucideIcons.CheckCircle className="w-3.5 h-3.5" />
+                          <CheckCircle className="w-3.5 h-3.5" />
                           <span className="text-xs font-semibold">Completada</span>
                         </div>
                       </div>
