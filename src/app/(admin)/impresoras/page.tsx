@@ -110,6 +110,11 @@ export default function ImpresorasPage() {
         className="flex items-center justify-between"
       >
         <div className="flex gap-3">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          >
           <Button 
             onClick={() => setShowModal(true)}
             className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-lg hover:shadow-purple-500/50 text-white transition-all"
@@ -117,6 +122,7 @@ export default function ImpresorasPage() {
             <Plus className="w-5 h-5 mr-2" />
             Agregar Impresora
           </Button>
+          </motion.div>
           {printers.length > 0 && (
             <Button 
               onClick={handleDeleteAll}

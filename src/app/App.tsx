@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { ConfigProvider } from './contexts/ConfigContext';
 
 // Auth pages
 import LoginPage from './(auth)/login/page';
@@ -18,10 +19,19 @@ import ClientesPage from './(admin)/clientes/page';
 import EmpleadosPage from './(admin)/empleados/page';
 import UsuariosPage from './(admin)/usuarios/page';
 import ConfiguracionPage from './(admin)/configuracion/page';
+import MesaPage from './(admin)/mesa/page';
+import PlanoMesaPage from './(admin)/mesa/plano/page';
+import CocinaPage from './(admin)/cocina/page';
+import ReportesPage from './(admin)/reportes/page';
+import CitasPage from './(admin)/citas/page';
+import ServiciosPage from './(admin)/servicios/page';
+import OrdenesServicioPage from './(admin)/ordenes-servicio/page';
 
 // Layouts
 import { AdminSidebar } from './components/AdminSidebar';
 import { AdminHeader } from './components/AdminHeader';
+import { DevPanel } from './components/DevPanel';
+import { BusinessModeSwitcher } from './components/BusinessModeSwitcher';
 
 // Función para obtener el tema inicial de forma SÍNCRONA (antes del render)
 function getInitialTheme(): 'dark' | 'light' {
@@ -137,6 +147,27 @@ export default function App() {
         case '/admin/configuracion':
           PageComponent = ConfiguracionPage;
           break;
+        case '/admin/mesa':
+          PageComponent = MesaPage;
+          break;
+        case '/admin/mesa/plano':
+          PageComponent = PlanoMesaPage;
+          break;
+        case '/admin/cocina':
+          PageComponent = CocinaPage;
+          break;
+        case '/admin/reportes':
+          PageComponent = ReportesPage;
+          break;
+        case '/admin/citas':
+          PageComponent = CitasPage;
+          break;
+        case '/admin/servicios':
+          PageComponent = ServiciosPage;
+          break;
+        case '/admin/ordenes-servicio':
+          PageComponent = OrdenesServicioPage;
+          break;
         default:
           PageComponent = DashboardPage;
       }
@@ -156,6 +187,12 @@ export default function App() {
               <PageComponent />
             </main>
           </div>
+
+          {/* Dev Panel - Solo visible en desarrollo */}
+          <DevPanel />
+          
+          {/* Business Mode Switcher - Botón flotante para cambiar vertical */}
+          <BusinessModeSwitcher />
         </div>
       );
     }
@@ -164,5 +201,9 @@ export default function App() {
     return <LoginPage />;
   };
 
-  return renderPage();
+  return (
+    <ConfigProvider>
+      {renderPage()}
+    </ConfigProvider>
+  );
 }

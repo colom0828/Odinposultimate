@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { LogOut, Bell, User, X, CheckCheck, Clock, ShoppingCart, Package, Trash2 } from 'lucide-react';
+import { LogOut, Bell, User, X, CheckCheck, Clock, ShoppingCart, Package, Trash2, Store } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from './ui/button';
 import { OdinLogo } from './OdinLogo';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
+import { useConfig } from '../contexts/ConfigContext';
 
 interface Notification {
   id: number;
@@ -105,6 +106,38 @@ export function AdminHeader() {
     }
   };
 
+  const config = useConfig();
+
+  // Helper para obtener la etiqueta del tipo de negocio
+  const getBusinessModeLabel = () => {
+    const labels: Record<string, string> = {
+      restaurant: 'Restaurante',
+      spa: 'Spa/Salón',
+      hardware: 'Ferretería',
+      retail: 'Tienda',
+      tech_service: 'Servicio Técnico',
+      bar: 'Bar',
+      cafe: 'Cafetería',
+      fast_food: 'Comida Rápida',
+      wholesale: 'Mayorista',
+      delivery_only: 'Delivery',
+      multi_vertical: 'Multi-vertical',
+    };
+    return labels[config.config?.businessType || ''] || 'Comercio';
+  };
+
+  // Helper para obtener el color del badge según tipo de negocio
+  const getBusinessModeColor = () => {
+    const colors: Record<string, string> = {
+      restaurant: 'from-orange-500 to-red-500',
+      spa: 'from-pink-500 to-purple-500',
+      hardware: 'from-gray-600 to-gray-800',
+      retail: 'from-blue-500 to-cyan-500',
+      tech_service: 'from-purple-500 to-pink-500',
+    };
+    return colors[config.config?.businessType || ''] || 'from-blue-500 to-purple-500';
+  };
+
   return (
     <header className="h-16 flex items-center justify-between px-6 sticky top-0 z-10 bg-white/70 backdrop-blur-xl border-b border-slate-200 dark:bg-gradient-to-r dark:from-slate-950/80 dark:via-slate-900/80 dark:to-slate-950/80 dark:border-purple-500/20 transition-colors duration-300">
       <div className="flex items-center space-x-4">
@@ -113,6 +146,16 @@ export function AdminHeader() {
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">ODIN POS</h2>
           <p className="text-xs text-slate-600 dark:text-slate-400">Sistema de Punto de Venta</p>
         </div>
+        
+        {/* Badge de Modo de Negocio */}
+        {config.config && (
+          <div className={`px-3 py-1.5 rounded-full bg-gradient-to-r ${getBusinessModeColor()} bg-opacity-10 border border-white/20 flex items-center space-x-2`}>
+            <Store className="w-3.5 h-3.5 text-white" />
+            <span className="text-xs font-medium text-white">
+              Modo: {getBusinessModeLabel()}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center space-x-4">

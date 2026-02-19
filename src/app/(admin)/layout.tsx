@@ -3,6 +3,7 @@
 import { AdminSidebar } from '../components/AdminSidebar';
 import { AdminHeader } from '../components/AdminHeader';
 import { PageTransition } from '../components/PageTransition';
+import { DevPanel } from '../components/DevPanel';
 import { Toaster } from 'sonner';
 import { useEffect, useState } from 'react';
 
@@ -101,6 +102,9 @@ export default function AdminLayout({
             },
           }}
         />
+
+        {/* Dev Panel - Solo visible en desarrollo */}
+        <DevPanel />
       </div>
     </>
   );

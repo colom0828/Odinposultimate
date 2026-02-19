@@ -131,8 +131,13 @@ export default function ProductosPage() {
       >
         <div>
           <h1 className="text-3xl font-bold text-[var(--odin-text-primary)] mb-2">Productos</h1>
-          <p className="text-[var(--odin-text-secondary)]">Gestión de inventario y productos</p>
+          <p className="text-[var(--odin-text-secondary)]">Gestión de inventario y catálogo</p>
         </div>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        >
         <Button 
           onClick={() => handleOpenModal()}
           className="bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white shadow-lg shadow-indigo-500/30"
@@ -140,6 +145,7 @@ export default function ProductosPage() {
           <Plus className="w-5 h-5 mr-2" />
           Nuevo Producto
         </Button>
+        </motion.div>
       </motion.div>
 
       {/* Stats cards */}

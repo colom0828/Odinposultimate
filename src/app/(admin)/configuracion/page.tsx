@@ -64,17 +64,17 @@ export default function ConfiguracionPage() {
       }
     }
     
-    // Cargar tema guardado o aplicar tema claro por defecto para mostrar el diseño
+    // Cargar tema guardado o mantener tema oscuro por defecto
     const savedThemeFromStorage = localStorage.getItem('odin-theme') as 'dark' | 'light' | null;
     if (savedThemeFromStorage) {
       setSavedTheme(savedThemeFromStorage);
       setTempTheme(savedThemeFromStorage);
       applyThemeToDocument(savedThemeFromStorage);
     } else {
-      // Aplicar tema claro por defecto al cargar la página de configuración
-      setSavedTheme('light');
-      setTempTheme('light');
-      applyThemeToDocument('light');
+      // Mantener tema oscuro por defecto (no cambiar el tema existente)
+      setSavedTheme('dark');
+      setTempTheme('dark');
+      // No aplicar el tema aquí para no sobrescribir el tema actual del sistema
     }
   }, []);
 

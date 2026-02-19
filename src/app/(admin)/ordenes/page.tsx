@@ -212,8 +212,13 @@ export default function OrdenesPage() {
       >
         <div>
           <h1 className="text-3xl font-bold text-[var(--odin-text-primary)] mb-2">Órdenes de Compra</h1>
-          <p className="text-[var(--odin-text-secondary)]">Gestión de órdenes a proveedores</p>
+          <p className="text-[var(--odin-text-secondary)]\">Gestión de órdenes a proveedores</p>
         </div>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        >
         <Button 
           onClick={() => handleOpenModal()}
           className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-lg hover:shadow-purple-500/50 text-white transition-all"
@@ -221,6 +226,7 @@ export default function OrdenesPage() {
           <Plus className="w-5 h-5 mr-2" />
           Nueva Orden
         </Button>
+        </motion.div>
       </motion.div>
 
       {/* Stats cards */}

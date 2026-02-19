@@ -1,0 +1,243 @@
+import { SupervisorDashboardData } from '../types/dashboard.types';
+
+export const mockDashboardData: SupervisorDashboardData = {
+  realTimeMetrics: {
+    activeOrders: 18,
+    ordersInKitchen: 7,
+    deliveriesInRoute: 4,
+    tablesOccupied: 12,
+    tablesFree: 8,
+  },
+
+  dailyPerformance: {
+    topProducts: [
+      {
+        id: 'prod-1',
+        name: 'Pizza Margarita',
+        category: 'Pizzas',
+        units: 45,
+        trend: 'up',
+      },
+      {
+        id: 'prod-2',
+        name: 'Hamburguesa Clásica',
+        category: 'Hamburguesas',
+        units: 38,
+        trend: 'up',
+      },
+      {
+        id: 'prod-3',
+        name: 'Tacos al Pastor',
+        category: 'Tacos',
+        units: 32,
+        trend: 'neutral',
+      },
+      {
+        id: 'prod-4',
+        name: 'Ensalada César',
+        category: 'Ensaladas',
+        units: 28,
+        trend: 'down',
+      },
+      {
+        id: 'prod-5',
+        name: 'Pasta Alfredo',
+        category: 'Pastas',
+        units: 25,
+        trend: 'up',
+      },
+    ],
+    topCategory: {
+      id: 'cat-1',
+      name: 'Pizzas',
+      orders: 67,
+      icon: '🍕',
+    },
+    topCourier: {
+      id: 'courier-1',
+      name: 'Carlos Ramírez',
+      deliveriesCompleted: 23,
+      avgDeliveryTime: 28,
+    },
+    topTable: {
+      id: 'table-1',
+      tableNumber: '12',
+      rotationCount: 8,
+      area: 'Terraza',
+    },
+  },
+
+  alerts: [
+    {
+      id: 'alert-1',
+      type: 'DELAYED_ORDER',
+      severity: 'high',
+      title: 'Orden #0847 retrasada',
+      description: 'Lleva 32 minutos en cocina. Cliente Mesa 5 esperando.',
+      timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+      relatedId: 'ORDER-0847',
+    },
+    {
+      id: 'alert-2',
+      type: 'LONG_TABLE',
+      severity: 'medium',
+      title: 'Mesa 8 ocupada más de 1 hora',
+      description: 'Cliente lleva 1h 15min. Considerar verificar si necesita algo.',
+      timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+      relatedId: 'TABLE-08',
+    },
+    {
+      id: 'alert-3',
+      type: 'LOW_STOCK',
+      severity: 'medium',
+      title: 'Stock bajo: Pepperoni',
+      description: 'Quedan solo 5 unidades. Programar reposición.',
+      timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+      relatedId: 'PRODUCT-PEPPERONI',
+    },
+    {
+      id: 'alert-4',
+      type: 'OLD_ORDER',
+      severity: 'low',
+      title: 'Orden #0845 pendiente de entrega',
+      description: 'Lista en cocina hace 8 minutos. Verificar con mesero.',
+      timestamp: new Date(Date.now() - 8 * 60 * 1000).toISOString(),
+      relatedId: 'ORDER-0845',
+    },
+  ],
+
+  staffStatus: {
+    chefs: [
+      {
+        id: 'chef-1',
+        name: 'Juan Pérez',
+        role: 'COCINERO',
+        status: 'active',
+        currentTask: 'Preparando 3 órdenes',
+      },
+      {
+        id: 'chef-2',
+        name: 'María González',
+        role: 'COCINERO',
+        status: 'active',
+        currentTask: 'Preparando 2 órdenes',
+      },
+      {
+        id: 'chef-3',
+        name: 'Pedro Martínez',
+        role: 'COCINERO',
+        status: 'break',
+      },
+      {
+        id: 'chef-4',
+        name: 'Ana López',
+        role: 'COCINERO',
+        status: 'active',
+        currentTask: 'Preparando 4 órdenes',
+      },
+      {
+        id: 'chef-5',
+        name: 'Carlos Rivera',
+        role: 'COCINERO',
+        status: 'active',
+        currentTask: 'Preparando 1 orden',
+      },
+    ],
+    cashiers: [
+      {
+        id: 'cashier-1',
+        name: 'Laura Sánchez',
+        role: 'CAJERO',
+        status: 'active',
+        currentTask: 'Atendiendo cliente',
+      },
+      {
+        id: 'cashier-2',
+        name: 'Roberto Díaz',
+        role: 'CAJERO',
+        status: 'active',
+        currentTask: 'Procesando pago',
+      },
+      {
+        id: 'cashier-3',
+        name: 'Carmen Torres',
+        role: 'CAJERO',
+        status: 'break',
+      },
+    ],
+    couriers: [
+      {
+        id: 'courier-1',
+        name: 'Carlos Ramírez',
+        role: 'REPARTIDOR',
+        status: 'active',
+        currentTask: 'En ruta - Orden #0843',
+      },
+      {
+        id: 'courier-2',
+        name: 'Miguel Ángel',
+        role: 'REPARTIDOR',
+        status: 'active',
+        currentTask: 'En ruta - Orden #0844',
+      },
+      {
+        id: 'courier-3',
+        name: 'David Silva',
+        role: 'REPARTIDOR',
+        status: 'active',
+        currentTask: 'Disponible en zona',
+      },
+      {
+        id: 'courier-4',
+        name: 'Fernando Ruiz',
+        role: 'REPARTIDOR',
+        status: 'break',
+      },
+      {
+        id: 'courier-5',
+        name: 'Jorge Castro',
+        role: 'REPARTIDOR',
+        status: 'active',
+        currentTask: 'En ruta - Orden #0846',
+      },
+    ],
+    waiters: [
+      {
+        id: 'waiter-1',
+        name: 'Sofia Hernández',
+        role: 'MESERO',
+        status: 'active',
+        currentTask: 'Atendiendo mesa 5',
+      },
+      {
+        id: 'waiter-2',
+        name: 'Daniel Morales',
+        role: 'MESERO',
+        status: 'active',
+        currentTask: 'Atendiendo mesa 12',
+      },
+      {
+        id: 'waiter-3',
+        name: 'Patricia Vega',
+        role: 'MESERO',
+        status: 'active',
+        currentTask: 'Disponible',
+      },
+      {
+        id: 'waiter-4',
+        name: 'Ricardo Flores',
+        role: 'MESERO',
+        status: 'break',
+      },
+      {
+        id: 'waiter-5',
+        name: 'Gabriela Ortiz',
+        role: 'MESERO',
+        status: 'active',
+        currentTask: 'Atendiendo mesa 8',
+      },
+    ],
+  },
+
+  lastUpdated: new Date().toISOString(),
+};

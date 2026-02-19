@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { DollarSign, Plus, TrendingUp, TrendingDown, Eye, Download, Search } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Card } from '../../components/ui/card';
@@ -167,7 +167,12 @@ export default function CajaPage() {
       </motion.div>
 
       {/* Action buttons */}
-      <div className="flex flex-wrap gap-3">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+        className="flex flex-wrap gap-3"
+      >
         <Button
           onClick={() => setShowOpenModal(true)}
           className="bg-gradient-to-r from-green-600 to-emerald-600 hover:shadow-lg hover:shadow-green-500/50 text-white"
@@ -198,10 +203,15 @@ export default function CajaPage() {
           <TrendingDown className="w-4 h-4 mr-2" />
           Retiro Efectivo
         </Button>
-      </div>
+      </motion.div>
 
       {/* Tabs */}
-      <div className="flex gap-4 border-b border-[var(--odin-border)]">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.3 }}
+        className="flex gap-4 border-b border-[var(--odin-border)]"
+      >
         <button
           onClick={() => setActiveTab('movements')}
           className={`px-4 py-2 font-medium transition-all relative ${
@@ -212,7 +222,11 @@ export default function CajaPage() {
         >
           Apertura y Cierre - Movimientos de Caja
           {activeTab === 'movements' && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600" />
+            <motion.div
+              layoutId="activeTab"
+              className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600"
+              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+            />
           )}
         </button>
         <button
@@ -225,30 +239,182 @@ export default function CajaPage() {
         >
           Cash Register Logs
           {activeTab === 'logs' && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600" />
+            <motion.div
+              layoutId="activeTab"
+              className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600"
+              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+            />
           )}
         </button>
-      </div>
+      </motion.div>
 
       {/* Content */}
-      {activeTab === 'movements' && (
-        <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] backdrop-blur-sm transition-colors duration-300 overflow-hidden">
-          {/* Table header with actions */}
-          <div className="p-4 border-b border-[var(--odin-border)] flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10 bg-[var(--odin-input-bg)]"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download Open/Close History
-              </Button>
+      <AnimatePresence mode="wait">
+        {activeTab === 'movements' && (
+          <motion.div
+            key="movements"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+          <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] backdrop-blur-sm transition-colors duration-300 overflow-hidden">
+            {/* Table header with actions */}
+            <div className="p-4 border-b border-[var(--odin-border)] flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10 bg-[var(--odin-input-bg)]"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download Open/Close History
+                </Button>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={itemsPerPage}
+                    onChange={(e) => {
+                      setItemsPerPage(Number(e.target.value));
+                      setCurrentPageMovements(1);
+                    }}
+                    className="bg-[var(--odin-input-bg)] border border-[var(--odin-input-border)] text-[var(--odin-text-primary)] rounded px-2 py-1 text-sm"
+                  >
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
+                  <span className="text-sm text-[var(--odin-text-secondary)]">entries per page</span>
+                </div>
+              </div>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--odin-text-secondary)]" />
+                <Input
+                  placeholder="Buscar..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-[var(--odin-input-bg)] border-[var(--odin-input-border)] text-[var(--odin-text-primary)] w-64"
+                />
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-[var(--odin-input-bg)] border-b border-[var(--odin-border)]">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">NO</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">CAJA REGISTRADORA</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">EMPLEADO</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">MONTO</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">FECHA</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">MOVIMIENTO</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">DESCRIPCIÓN</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">ACCIONES</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--odin-border)]">
+                  {paginatedMovements.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-6 py-12 text-center">
+                        <div className="flex flex-col items-center justify-center text-[var(--odin-text-secondary)]">
+                          <DollarSign className="w-12 h-12 mb-3 opacity-50" />
+                          <p className="text-lg font-medium">No hay movimientos registrados</p>
+                          <p className="text-sm mt-1">Abre una caja para comenzar</p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    paginatedMovements.map((movement, index) => (
+                      <tr key={movement.id} className="hover:bg-[var(--odin-input-bg)] transition-colors">
+                        <td className="px-6 py-4">
+                          <span className="text-sm text-[var(--odin-text-primary)]">{filteredMovements.length - (startIndexMovements + index)}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-sm font-medium text-purple-400">{movement.cashRegister}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-sm text-blue-400">{movement.employee}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-sm font-semibold text-[var(--odin-text-primary)]">
+                            {formatCurrency(movement.amount)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-sm text-[var(--odin-text-secondary)]">{formatDate(movement.date)}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`text-sm font-medium ${getMovementTypeColor(movement.movementType)}`}>
+                            {movement.movementType}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-sm text-[var(--odin-text-secondary)]">{movement.description}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <button
+                            className="p-2 rounded-lg bg-[var(--odin-input-bg)] border border-[var(--odin-border)] hover:bg-purple-500/10 hover:border-purple-500/50 transition-all"
+                            onClick={() => {
+                              setSelectedMovement(movement);
+                              setShowMovementDetails(true);
+                            }}
+                          >
+                            <Eye className="w-4 h-4 text-purple-400" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="p-4 border-t border-[var(--odin-border)] flex items-center justify-between">
+              <span className="text-sm text-[var(--odin-text-secondary)]">
+                Mostrando de {startIndexMovements + 1} a {Math.min(endIndexMovements, filteredMovements.length)} de {filteredMovements.length} entradas
+              </span>
+              <div className="flex gap-2">
+                {generatePageNumbers(currentPageMovements, totalPagesMovements).map(page => (
+                  <button
+                    key={page}
+                    className={`w-8 h-8 rounded ${
+                      page === currentPageMovements
+                        ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white'
+                        : 'bg-[var(--odin-input-bg)] border border-[var(--odin-border)] text-[var(--odin-text-primary)] hover:bg-purple-500/10'
+                    }`}
+                    onClick={() => {
+                      if (typeof page === 'number') {
+                        setCurrentPageMovements(page);
+                      }
+                    }}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </Card>
+          </motion.div>
+        )}
+
+        {activeTab === 'logs' && (
+          <motion.div
+            key="logs"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+          <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] backdrop-blur-sm transition-colors duration-300 overflow-hidden">
+            {/* Table header with actions */}
+            <div className="p-4 border-b border-[var(--odin-border)] flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <select
                   value={itemsPerPage}
                   onChange={(e) => {
                     setItemsPerPage(Number(e.target.value));
-                    setCurrentPageMovements(1);
+                    setCurrentPageLogs(1);
                   }}
                   className="bg-[var(--odin-input-bg)] border border-[var(--odin-input-border)] text-[var(--odin-text-primary)] rounded px-2 py-1 text-sm"
                 >
@@ -259,251 +425,121 @@ export default function CajaPage() {
                 </select>
                 <span className="text-sm text-[var(--odin-text-secondary)]">entries per page</span>
               </div>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--odin-text-secondary)]" />
+                <Input
+                  placeholder="Buscar..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-[var(--odin-input-bg)] border-[var(--odin-input-border)] text-[var(--odin-text-primary)] w-64"
+                />
+              </div>
             </div>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--odin-text-secondary)]" />
-              <Input
-                placeholder="Buscar..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-[var(--odin-input-bg)] border-[var(--odin-input-border)] text-[var(--odin-text-primary)] w-64"
-              />
-            </div>
-          </div>
 
-          {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-[var(--odin-input-bg)] border-b border-[var(--odin-border)]">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">NO</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">CAJA REGISTRADORA</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">EMPLEADO</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">MONTO</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">FECHA</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">MOVIMIENTO</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">DESCRIPCIÓN</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">ACCIONES</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--odin-border)]">
-                {paginatedMovements.length === 0 ? (
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-[var(--odin-input-bg)] border-b border-[var(--odin-border)]">
                   <tr>
-                    <td colSpan={8} className="px-6 py-12 text-center">
-                      <div className="flex flex-col items-center justify-center text-[var(--odin-text-secondary)]">
-                        <DollarSign className="w-12 h-12 mb-3 opacity-50" />
-                        <p className="text-lg font-medium">No hay movimientos registrados</p>
-                        <p className="text-sm mt-1">Abre una caja para comenzar</p>
-                      </div>
-                    </td>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">NO</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">CASH REGISTER</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">DATE</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">INITIAL AMOUNT</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">FINAL AMOUNT</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">LAG REASON</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">ACCIONES</th>
                   </tr>
-                ) : (
-                  paginatedMovements.map((movement, index) => (
-                    <tr key={movement.id} className="hover:bg-[var(--odin-input-bg)] transition-colors">
-                      <td className="px-6 py-4">
-                        <span className="text-sm text-[var(--odin-text-primary)]">{filteredMovements.length - (startIndexMovements + index)}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm font-medium text-purple-400">{movement.cashRegister}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm text-blue-400">{movement.employee}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm font-semibold text-[var(--odin-text-primary)]">
-                          {formatCurrency(movement.amount)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm text-[var(--odin-text-secondary)]">{formatDate(movement.date)}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`text-sm font-medium ${getMovementTypeColor(movement.movementType)}`}>
-                          {movement.movementType}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm text-[var(--odin-text-secondary)]">{movement.description}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <button
-                          className="p-2 rounded-lg bg-[var(--odin-input-bg)] border border-[var(--odin-border)] hover:bg-purple-500/10 hover:border-purple-500/50 transition-all"
-                          onClick={() => {
-                            setSelectedMovement(movement);
-                            setShowMovementDetails(true);
-                          }}
-                        >
-                          <Eye className="w-4 h-4 text-purple-400" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          <div className="p-4 border-t border-[var(--odin-border)] flex items-center justify-between">
-            <span className="text-sm text-[var(--odin-text-secondary)]">
-              Mostrando de {startIndexMovements + 1} a {Math.min(endIndexMovements, filteredMovements.length)} de {filteredMovements.length} entradas
-            </span>
-            <div className="flex gap-2">
-              {generatePageNumbers(currentPageMovements, totalPagesMovements).map(page => (
-                <button
-                  key={page}
-                  className={`w-8 h-8 rounded ${
-                    page === currentPageMovements
-                      ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white'
-                      : 'bg-[var(--odin-input-bg)] border border-[var(--odin-border)] text-[var(--odin-text-primary)] hover:bg-purple-500/10'
-                  }`}
-                  onClick={() => {
-                    if (typeof page === 'number') {
-                      setCurrentPageMovements(page);
-                    }
-                  }}
-                >
-                  {page}
-                </button>
-              ))}
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {activeTab === 'logs' && (
-        <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] backdrop-blur-sm transition-colors duration-300 overflow-hidden">
-          {/* Table header with actions */}
-          <div className="p-4 border-b border-[var(--odin-border)] flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <select
-                value={itemsPerPage}
-                onChange={(e) => {
-                  setItemsPerPage(Number(e.target.value));
-                  setCurrentPageLogs(1);
-                }}
-                className="bg-[var(--odin-input-bg)] border border-[var(--odin-input-border)] text-[var(--odin-text-primary)] rounded px-2 py-1 text-sm"
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-              <span className="text-sm text-[var(--odin-text-secondary)]">entries per page</span>
-            </div>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--odin-text-secondary)]" />
-              <Input
-                placeholder="Buscar..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-[var(--odin-input-bg)] border-[var(--odin-input-border)] text-[var(--odin-text-primary)] w-64"
-              />
-            </div>
-          </div>
-
-          {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-[var(--odin-input-bg)] border-b border-[var(--odin-border)]">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">NO</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">CASH REGISTER</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">DATE</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">INITIAL AMOUNT</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">FINAL AMOUNT</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">LAG REASON</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--odin-text-primary)]">ACCIONES</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--odin-border)]">
-                {paginatedLogs.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center">
-                      <div className="flex flex-col items-center justify-center text-[var(--odin-text-secondary)]">
-                        <DollarSign className="w-12 h-12 mb-3 opacity-50" />
-                        <p className="text-lg font-medium">No hay logs registrados</p>
-                        <p className="text-sm mt-1">Los logs aparecerán cuando abras cajas</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  paginatedLogs.map((log, index) => (
-                    <tr key={log.id} className="hover:bg-[var(--odin-input-bg)] transition-colors">
-                      <td className="px-6 py-4">
-                        <span className="text-sm text-[var(--odin-text-primary)]">{filteredLogs.length - (startIndexLogs + index)}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm font-medium text-purple-400">{log.cashRegister}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm text-[var(--odin-text-secondary)]">{formatDate(log.date)}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm font-semibold text-green-400">
-                          {formatCurrency(log.initialAmount)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`text-sm font-semibold ${log.isOpen ? 'text-blue-400' : 'text-red-400'}`}>
-                          {formatCurrency(log.finalAmount)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-[var(--odin-text-secondary)]">{log.lastReason}</span>
-                          {log.isOpen && (
-                            <span className="px-2 py-1 text-xs rounded-full bg-green-500/20 text-green-400 border border-green-500/30">
-                              Abierta
-                            </span>
-                          )}
+                </thead>
+                <tbody className="divide-y divide-[var(--odin-border)]">
+                  {paginatedLogs.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-6 py-12 text-center">
+                        <div className="flex flex-col items-center justify-center text-[var(--odin-text-secondary)]">
+                          <DollarSign className="w-12 h-12 mb-3 opacity-50" />
+                          <p className="text-lg font-medium">No hay logs registrados</p>
+                          <p className="text-sm mt-1">Los logs aparecerán cuando abras cajas</p>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <button
-                          className="p-2 rounded-lg bg-[var(--odin-input-bg)] border border-[var(--odin-border)] hover:bg-purple-500/10 hover:border-purple-500/50 transition-all"
-                          onClick={() => {
-                            setSelectedLog(log);
-                            setShowLogDetails(true);
-                          }}
-                        >
-                          <Eye className="w-4 h-4 text-purple-400" />
-                        </button>
-                      </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          <div className="p-4 border-t border-[var(--odin-border)] flex items-center justify-between">
-            <span className="text-sm text-[var(--odin-text-secondary)]">
-              Mostrando de {startIndexLogs + 1} a {Math.min(endIndexLogs, filteredLogs.length)} de {filteredLogs.length} entradas
-            </span>
-            <div className="flex gap-2">
-              {generatePageNumbers(currentPageLogs, totalPagesLogs).map(page => (
-                <button
-                  key={page}
-                  className={`w-8 h-8 rounded ${
-                    page === currentPageLogs
-                      ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white'
-                      : 'bg-[var(--odin-input-bg)] border border-[var(--odin-border)] text-[var(--odin-text-primary)] hover:bg-purple-500/10'
-                  }`}
-                  onClick={() => {
-                    if (typeof page === 'number') {
-                      setCurrentPageLogs(page);
-                    }
-                  }}
-                >
-                  {page}
-                </button>
-              ))}
+                  ) : (
+                    paginatedLogs.map((log, index) => (
+                      <tr key={log.id} className="hover:bg-[var(--odin-input-bg)] transition-colors">
+                        <td className="px-6 py-4">
+                          <span className="text-sm text-[var(--odin-text-primary)]">{filteredLogs.length - (startIndexLogs + index)}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-sm font-medium text-purple-400">{log.cashRegister}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-sm text-[var(--odin-text-secondary)]">{formatDate(log.date)}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-sm font-semibold text-green-400">
+                            {formatCurrency(log.initialAmount)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`text-sm font-semibold ${log.isOpen ? 'text-blue-400' : 'text-red-400'}`}>
+                            {formatCurrency(log.finalAmount)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-[var(--odin-text-secondary)]">{log.lastReason}</span>
+                            {log.isOpen && (
+                              <span className="px-2 py-1 text-xs rounded-full bg-green-500/20 text-green-400 border border-green-500/30">
+                                Abierta
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <button
+                            className="p-2 rounded-lg bg-[var(--odin-input-bg)] border border-[var(--odin-border)] hover:bg-purple-500/10 hover:border-purple-500/50 transition-all"
+                            onClick={() => {
+                              setSelectedLog(log);
+                              setShowLogDetails(true);
+                            }}
+                          >
+                            <Eye className="w-4 h-4 text-purple-400" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
-          </div>
-        </Card>
-      )}
+
+            {/* Pagination */}
+            <div className="p-4 border-t border-[var(--odin-border)] flex items-center justify-between">
+              <span className="text-sm text-[var(--odin-text-secondary)]">
+                Mostrando de {startIndexLogs + 1} a {Math.min(endIndexLogs, filteredLogs.length)} de {filteredLogs.length} entradas
+              </span>
+              <div className="flex gap-2">
+                {generatePageNumbers(currentPageLogs, totalPagesLogs).map(page => (
+                  <button
+                    key={page}
+                    className={`w-8 h-8 rounded ${
+                      page === currentPageLogs
+                        ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white'
+                        : 'bg-[var(--odin-input-bg)] border border-[var(--odin-border)] text-[var(--odin-text-primary)] hover:bg-purple-500/10'
+                    }`}
+                    onClick={() => {
+                      if (typeof page === 'number') {
+                        setCurrentPageLogs(page);
+                      }
+                    }}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Modals */}
       <OpenCashRegisterModal isOpen={showOpenModal} onClose={() => setShowOpenModal(false)} />
