@@ -1,8 +1,16 @@
 # 🔍 GUÍA DE DEBUG PARA MÓDULO COCINA EN FIGMA SITES
 
+## ⚠️ **PROBLEMA IDENTIFICADO**
+
+El módulo de Cocina se cae en producción porque es el **ÚNICO módulo que usa:**
+
+1. **Zustand Store con Persist (localStorage)** - `ordersStore`
+2. **Hidratación de localStorage** que puede fallar en Figma Sites
+3. **SSR/Pre-rendering incompatible** con localStorage
+
 ## ✅ Cambios Realizados en el Código
 
-Se han implementado las siguientes optimizaciones para asegurar que el módulo Cocina funcione correctamente en producción:
+Se han implementado las siguientes optimizaciones críticas:
 
 ### 1. **Routing Corregido** (Crítico)
 - ✅ El estado inicial ahora lee `window.location.pathname` en lugar de estar hardcodeado

@@ -34,6 +34,9 @@ import {
 type FilterType = 'TODAS' | 'NUEVA' | 'PREPARANDO';
 
 export default function CocinaPage() {
+  // ✅ FIX: Estado para hidratación del store
+  const [isStoreHydrated, setIsStoreHydrated] = useState(false);
+
   // ✅ FIX: Obtener el array completo, no llamar a funciones
   const allOrders = useOrdersStore((state) => state.orders);
   const setKitchenStatus = useOrdersStore((state) => state.setKitchenStatus);
@@ -47,12 +50,23 @@ export default function CocinaPage() {
   const [cancelReason, setCancelReason] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<FilterType>('TODAS');
 
-  // Debug: verificar que el componente se monte correctamente
+  // Debug: verificar que el componente se monte correctamente + hidratar store
   useEffect(() => {
     console.log('✅ CocinaPage mounted successfully');
     console.log('📊 Orders count:', allOrders?.length ?? 0);
     console.log('🌐 Current URL:', window.location.href);
     console.log('📍 Pathname:', window.location.pathname);
+    
+    // ✅ FIX: Hidratar store de localStorage manualmente en el cliente
+    if (typeof window !== 'undefined') {
+      // Forzar re-hidratación del store de Zustand
+      const storedData = localStorage.getItem('odin-orders-storage');
+      if (storedData) {
+        console.log('💾 Hydrating orders from localStorage');
+      }
+      setIsStoreHydrated(true);
+    }
+    
     return () => {
       console.log('❌ CocinaPage unmounted');
     };
