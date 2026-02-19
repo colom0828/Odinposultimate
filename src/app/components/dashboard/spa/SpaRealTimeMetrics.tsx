@@ -1,75 +1,89 @@
 'use client';
 
 import { motion } from 'motion/react';
-import * as LucideIcons from 'lucide-react';
+import { 
+  Calendar, 
+  Clock, 
+  CalendarClock, 
+  XCircle, 
+  Users, 
+  TrendingUp 
+} from 'lucide-react';
 import { Card } from '../../ui/card';
 import { SpaRealTimeMetrics as SpaMetricsType } from '../../../types/dashboard.types';
 
 interface Props {
   metrics: SpaMetricsType;
+  onCardClick?: (cardId: string) => void;
 }
 
-export function SpaRealTimeMetrics({ metrics }: Props) {
+export function SpaRealTimeMetrics({ metrics, onCardClick }: Props) {
   const cards = [
     {
       id: 'appointments_today',
       label: 'Citas de Hoy',
       value: metrics.appointmentsToday,
-      icon: LucideIcons.Calendar,
+      icon: Calendar,
       color: 'purple',
       bgGradient: 'from-purple-500/20 to-purple-600/10',
       iconBg: 'bg-purple-500/20',
       textColor: 'text-purple-400',
+      clickable: true,
     },
     {
       id: 'in_progress',
       label: 'En Curso',
       value: metrics.appointmentsInProgress,
-      icon: LucideIcons.Clock,
+      icon: Clock,
       color: 'blue',
       bgGradient: 'from-blue-500/20 to-blue-600/10',
       iconBg: 'bg-blue-500/20',
       textColor: 'text-blue-400',
+      clickable: true,
     },
     {
       id: 'upcoming_2h',
       label: 'Próximas 2 Horas',
       value: metrics.upcomingAppointments,
-      icon: LucideIcons.CalendarClock,
+      icon: CalendarClock,
       color: 'orange',
       bgGradient: 'from-orange-500/20 to-orange-600/10',
       iconBg: 'bg-orange-500/20',
       textColor: 'text-orange-400',
+      clickable: true,
     },
     {
       id: 'cancelled_today',
       label: 'Canceladas Hoy',
       value: metrics.cancelledToday,
-      icon: LucideIcons.XCircle,
+      icon: XCircle,
       color: 'red',
       bgGradient: 'from-red-500/20 to-red-600/10',
       iconBg: 'bg-red-500/20',
       textColor: 'text-red-400',
+      clickable: true,
     },
     {
       id: 'active_staff',
       label: 'Personal Activo',
       value: metrics.activeStaff,
-      icon: LucideIcons.Users,
+      icon: Users,
       color: 'green',
       bgGradient: 'from-green-500/20 to-green-600/10',
       iconBg: 'bg-green-500/20',
       textColor: 'text-green-400',
+      clickable: false,
     },
     {
       id: 'schedule_occupation',
       label: 'Ocupación Agenda',
       value: `${metrics.scheduleOccupation}%`,
-      icon: LucideIcons.TrendingUp,
+      icon: TrendingUp,
       color: 'cyan',
       bgGradient: 'from-cyan-500/20 to-cyan-600/10',
       iconBg: 'bg-cyan-500/20',
       textColor: 'text-cyan-400',
+      clickable: false,
     },
   ];
 
@@ -82,7 +96,12 @@ export function SpaRealTimeMetrics({ metrics }: Props) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: index * 0.05 }}
         >
-          <Card className={`bg-gradient-to-br ${card.bgGradient} border-border p-4 hover:scale-105 transition-transform duration-300`}>
+          <Card 
+            className={`bg-gradient-to-br ${card.bgGradient} border-border p-4 hover:scale-105 transition-all duration-300 ${
+              card.clickable ? 'cursor-pointer hover:border-' + card.color + '-500/50' : ''
+            }`}
+            onClick={() => card.clickable && onCardClick?.(card.id)}
+          >
             <div className="flex items-start justify-between mb-3">
               <div className={`p-3 rounded-xl ${card.iconBg}`}>
                 <card.icon className={`w-6 h-6 ${card.textColor}`} />

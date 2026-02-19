@@ -1,275 +1,354 @@
-import { motion, AnimatePresence } from 'motion/react';
-import * as LucideIcons from 'lucide-react';
-import { OperationalAlert } from '../../types/dashboard.types';
-import { toast } from 'sonner';
+'use client';
 
-interface AlertDetailModalProps {
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  X, 
+  Clock, 
+  AlertTriangle, 
+  CheckCircle, 
+  Calendar,
+  User,
+  MapPin,
+  FileText,
+  Tag,
+  TrendingUp
+} from 'lucide-react';
+import { Card } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Textarea } from '../ui/textarea';
+import { OperationalAlert } from '../../types/dashboard.types';
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
+
+interface Props {
   alert: OperationalAlert | null;
+  isOpen: boolean;
   onClose: () => void;
-  onResolve?: (alertId: string) => void;
+  onResolve: (alertId: string, resolution?: string) => void;
 }
 
-export function AlertDetailModal({ alert, onClose, onResolve }: AlertDetailModalProps) {
+export function AlertDetailModal({ alert, isOpen, onClose, onResolve }: Props) {
+  const [resolution, setResolution] = useState('');
+  const [isResolving, setIsResolving] = useState(false);
+
   if (!alert) return null;
 
-  const getSeverityConfig = (severity: OperationalAlert['severity']) => {
-    switch (severity) {
-      case 'high':
-        return {
-          bg: 'from-red-600 to-red-700',
-          icon: LucideIcons.AlertTriangle,
-          iconColor: 'text-red-400',
-          badge: 'bg-red-500',
-          label: 'Urgente',
-          borderColor: 'border-red-500/30',
-        };
-      case 'medium':
-        return {
-          bg: 'from-yellow-600 to-yellow-700',
-          icon: LucideIcons.AlertCircle,
-          iconColor: 'text-yellow-400',
-          badge: 'bg-yellow-500',
-          label: 'Atención',
-          borderColor: 'border-yellow-500/30',
-        };
-      case 'low':
-        return {
-          bg: 'from-blue-600 to-blue-700',
-          icon: LucideIcons.Info,
-          iconColor: 'text-blue-400',
-          badge: 'bg-blue-500',
-          label: 'Info',
-          borderColor: 'border-blue-500/30',
-        };
+  const getAlertTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+      DELAYED_APPOINTMENT: 'Cita Retrasada',
+      SCHEDULE_GAP: 'Hueco en Agenda',
+      OVERBOOKED_TECHNICIAN: 'Personal Sobrecargado',
+      NO_SHOW: 'Cliente No se Presentó',
+      LOW_SUPPLIES: 'Insumos Bajos',
+      DELAYED_ORDER: 'Pedido Retrasado',
+      OLD_ORDER: 'Pedido Antiguo',
+      LONG_TABLE: 'Mesa Mucho Tiempo',
+      LOW_STOCK: 'Stock Bajo',
+    };
+    return labels[type] || type;
+  };
+
+  const getSeverityConfig = (severity: 'high' | 'medium' | 'low') => {
+    const configs = {
+      high: { 
+        label: 'Alta', 
+        color: 'bg-red-500/20 text-red-400 border-red-500/30',
+        gradient: 'from-red-500/20 to-red-600/10'
+      },
+      medium: { 
+        label: 'Media', 
+        color: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+        gradient: 'from-orange-500/20 to-orange-600/10'
+      },
+      low: { 
+        label: 'Baja', 
+        color: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+        gradient: 'from-blue-500/20 to-blue-600/10'
+      },
+    };
+    return configs[severity];
+  };
+
+  const formatTime = (timestamp: string) => {
+    try {
+      return formatDistanceToNow(new Date(timestamp), { 
+        addSuffix: true,
+        locale: es 
+      });
+    } catch {
+      return 'Hace un momento';
     }
   };
 
-  const getTypeInfo = (type: OperationalAlert['type']) => {
-    switch (type) {
-      case 'DELAYED_ORDER':
-        return {
-          icon: LucideIcons.Clock,
-          label: 'Orden Retrasada',
-          action: 'Verificar estado en cocina',
-          color: 'text-orange-400',
-        };
-      case 'OLD_ORDER':
-        return {
-          icon: LucideIcons.Timer,
-          label: 'Orden Antigua',
-          action: 'Coordinar entrega inmediata',
-          color: 'text-blue-400',
-        };
-      case 'LONG_TABLE':
-        return {
-          icon: LucideIcons.Users,
-          label: 'Mesa Ocupada Largo Tiempo',
-          action: 'Verificar si necesitan algo',
-          color: 'text-purple-400',
-        };
-      case 'LOW_STOCK':
-        return {
-          icon: LucideIcons.PackageX,
-          label: 'Stock Bajo',
-          action: 'Programar reposición',
-          color: 'text-yellow-400',
-        };
-    }
-  };
-
-  const formatFullTime = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString('es-ES', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
+  const handleResolve = () => {
+    setIsResolving(true);
+    setTimeout(() => {
+      onResolve(alert.id, resolution || undefined);
+      setIsResolving(false);
+      setResolution('');
+      onClose();
+    }, 500);
   };
 
   const severityConfig = getSeverityConfig(alert.severity);
-  const typeInfo = getTypeInfo(alert.type);
-  const SeverityIcon = severityConfig.icon;
-  const TypeIcon = typeInfo.icon;
-
-  // Función para navegar al elemento relacionado
-  const handleGoToElement = () => {
-    if (!alert.relatedId) return;
-
-    // Determinar la ruta según el tipo de ID
-    if (alert.relatedId.startsWith('ORDER-')) {
-      toast.info('Navegando a la orden...');
-      // navigate('/ventas');
-      onClose();
-    } else if (alert.relatedId.startsWith('TABLE-')) {
-      toast.info('Navegando a las mesas...');
-      // navigate('/mesa');
-      onClose();
-    } else if (alert.relatedId.startsWith('PRODUCT-')) {
-      toast.info('Navegando a productos...');
-      // navigate('/productos');
-      onClose();
-    } else {
-      toast.info('Elemento identificado');
-    }
-  };
-
-  // Función para crear recordatorio
-  const handleReminder = () => {
-    toast.success('Recordatorio creado', {
-      description: 'Te notificaremos en 15 minutos',
-      icon: '⏰',
-    });
-    onClose();
-  };
-
-  // Función para marcar como resuelto
-  const handleResolve = () => {
-    if (onResolve) {
-      onResolve(alert.id);
-    }
-    toast.success('Alerta resuelta', {
-      description: 'La alerta ha sido marcada como resuelta',
-      icon: '✅',
-    });
-    onClose();
-  };
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-        />
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+          />
 
-        {/* Modal */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          transition={{ type: 'spring', duration: 0.5 }}
-          className="relative w-full max-w-2xl bg-card rounded-2xl border border-border shadow-2xl overflow-hidden"
-        >
-          {/* Header con Gradiente */}
-          <div className={`bg-gradient-to-r ${severityConfig.bg} p-6`}>
-            <div className="flex items-start justify-between">
-              <div className="flex items-start space-x-4">
-                <div className="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                  <SeverityIcon className="w-7 h-7 text-white" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <span className={`px-3 py-1 rounded-full ${severityConfig.badge} text-white text-xs font-bold uppercase`}>
-                      {severityConfig.label}
-                    </span>
-                    <span className="px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold">
-                      {typeInfo.label}
-                    </span>
-                  </div>
-                  <h2 className="text-2xl font-bold text-white mb-1">{alert.title}</h2>
-                  <p className="text-sm text-white/80">{alert.description}</p>
-                </div>
-              </div>
-              <button
-                onClick={onClose}
-                className="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition-all"
-              >
-                <LucideIcons.X className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Contenido */}
-          <div className="p-6 space-y-6">
-            {/* Info Grid */}
-            <div className="grid grid-cols-2 gap-4">
-              {/* Tipo de Alerta */}
-              <div className="bg-secondary/50 rounded-xl p-4 border border-border">
-                <div className="flex items-center space-x-2 mb-2">
-                  <TypeIcon className={`w-5 h-5 ${typeInfo.color}`} />
-                  <p className="text-xs text-muted-foreground uppercase font-semibold">Tipo</p>
-                </div>
-                <p className="text-base font-bold text-foreground">{typeInfo.label}</p>
-              </div>
-
-              {/* Fecha y Hora */}
-              <div className="bg-secondary/50 rounded-xl p-4 border border-border">
-                <div className="flex items-center space-x-2 mb-2">
-                  <LucideIcons.Calendar className="w-5 h-5 text-blue-400" />
-                  <p className="text-xs text-muted-foreground uppercase font-semibold">Fecha</p>
-                </div>
-                <p className="text-sm font-semibold text-foreground">{formatFullTime(alert.timestamp)}</p>
-              </div>
-            </div>
-
-            {/* ID Relacionado */}
-            {alert.relatedId && (
-              <div className="bg-secondary/50 rounded-xl p-4 border border-border">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <LucideIcons.Link className="w-5 h-5 text-purple-400" />
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase font-semibold">ID Relacionado</p>
-                      <p className="text-base font-bold text-foreground mt-1">{alert.relatedId}</p>
+          {/* Modal */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            onClick={onClose}
+          >
+            <Card 
+              className="w-full max-w-2xl bg-card border-border max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className={`p-6 border-b border-border bg-gradient-to-br ${severityConfig.gradient}`}>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start space-x-4 flex-1">
+                    <div className="p-3 bg-background/50 rounded-xl">
+                      <AlertTriangle className="w-8 h-8 text-orange-400" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <h2 className="text-2xl font-bold text-foreground">
+                          Detalle de Alerta
+                        </h2>
+                        <Badge className={severityConfig.color}>
+                          Prioridad {severityConfig.label}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {getAlertTypeLabel(alert.type)}
+                      </p>
                     </div>
                   </div>
+                  
                   <button
-                    className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition-colors flex items-center space-x-2"
-                    onClick={handleGoToElement}
+                    onClick={onClose}
+                    className="p-2 hover:bg-background/50 rounded-lg transition-colors"
                   >
-                    <span>Ir al elemento</span>
-                    <LucideIcons.ExternalLink className="w-4 h-4" />
+                    <X className="w-5 h-5 text-muted-foreground" />
                   </button>
                 </div>
               </div>
-            )}
 
-            {/* Acción Recomendada */}
-            <div className="bg-gradient-to-br from-green-600/10 to-emerald-600/10 rounded-xl p-4 border border-green-500/30">
-              <div className="flex items-start space-x-3">
-                <div className="w-10 h-10 rounded-lg bg-green-600 flex items-center justify-center flex-shrink-0">
-                  <LucideIcons.Lightbulb className="w-5 h-5 text-white" />
+              {/* Content */}
+              <div className="p-6 space-y-6">
+                {/* Info Principal */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground mb-2 flex items-center space-x-2">
+                      <FileText className="w-4 h-4" />
+                      <span>Título</span>
+                    </label>
+                    <p className="text-lg font-semibold text-foreground">{alert.title}</p>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground mb-2 flex items-center space-x-2">
+                      <FileText className="w-4 h-4" />
+                      <span>Descripción</span>
+                    </label>
+                    <p className="text-foreground">{alert.description}</p>
+                  </div>
+
+                  {/* Metadata Grid */}
+                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-purple-500/10 rounded-lg">
+                        <Clock className="w-4 h-4 text-purple-400" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Tiempo transcurrido</p>
+                        <p className="text-sm font-semibold text-foreground">
+                          {formatTime(alert.timestamp)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-blue-500/10 rounded-lg">
+                        <Tag className="w-4 h-4 text-blue-400" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Tipo de alerta</p>
+                        <p className="text-sm font-semibold text-foreground">
+                          {getAlertTypeLabel(alert.type)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-green-500/10 rounded-lg">
+                        <TrendingUp className="w-4 h-4 text-green-400" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Prioridad</p>
+                        <p className="text-sm font-semibold text-foreground capitalize">
+                          {severityConfig.label}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-orange-500/10 rounded-lg">
+                        <Calendar className="w-4 h-4 text-orange-400" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Fecha y hora</p>
+                        <p className="text-sm font-semibold text-foreground">
+                          {new Date(alert.timestamp).toLocaleString('es-ES', {
+                            day: '2-digit',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="text-xs text-green-400 uppercase font-semibold mb-1">Acción Recomendada</p>
-                  <p className="text-sm font-medium text-foreground">{typeInfo.action}</p>
+
+                {/* Acciones Sugeridas */}
+                {alert.type === 'DELAYED_APPOINTMENT' && (
+                  <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-2 flex items-center space-x-2">
+                      <CheckCircle className="w-4 h-4 text-blue-400" />
+                      <span>Acciones sugeridas</span>
+                    </h3>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      <li className="flex items-start space-x-2">
+                        <span className="text-blue-400">•</span>
+                        <span>Comunicarse con el cliente para avisar del retraso</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <span className="text-blue-400">•</span>
+                        <span>Re-agendar la siguiente cita si es necesario</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <span className="text-blue-400">•</span>
+                        <span>Actualizar el estado de la cita en el sistema</span>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+
+                {alert.type === 'NO_SHOW' && (
+                  <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-2 flex items-center space-x-2">
+                      <CheckCircle className="w-4 h-4 text-amber-400" />
+                      <span>Acciones sugeridas</span>
+                    </h3>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      <li className="flex items-start space-x-2">
+                        <span className="text-amber-400">•</span>
+                        <span>Llamar al cliente para verificar la ausencia</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <span className="text-amber-400">•</span>
+                        <span>Marcar la cita como "No se presentó"</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <span className="text-amber-400">•</span>
+                        <span>Abrir el espacio para walk-ins</span>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+
+                {alert.type === 'LOW_SUPPLIES' && (
+                  <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-2 flex items-center space-x-2">
+                      <CheckCircle className="w-4 h-4 text-purple-400" />
+                      <span>Acciones sugeridas</span>
+                    </h3>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      <li className="flex items-start space-x-2">
+                        <span className="text-purple-400">•</span>
+                        <span>Contactar al proveedor para realizar pedido urgente</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <span className="text-purple-400">•</span>
+                        <span>Verificar stock de productos alternativos</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <span className="text-purple-400">•</span>
+                        <span>Actualizar inventario en el sistema</span>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+
+                {/* Notas de Resolución */}
+                <div className="space-y-3">
+                  <label className="text-sm font-medium text-foreground flex items-center space-x-2">
+                    <FileText className="w-4 h-4" />
+                    <span>Notas de resolución (opcional)</span>
+                  </label>
+                  <Textarea
+                    value={resolution}
+                    onChange={(e) => setResolution(e.target.value)}
+                    placeholder="Describe las acciones tomadas para resolver esta alerta..."
+                    className="min-h-[100px] bg-background border-border"
+                  />
                 </div>
               </div>
-            </div>
 
-            {/* Botones de Acción */}
-            <div className="flex items-center space-x-3 pt-4 border-t border-border">
-              <button
-                className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold transition-all shadow-lg hover:shadow-green-500/50 flex items-center justify-center space-x-2"
-                onClick={handleResolve}
-              >
-                <LucideIcons.CheckCircle2 className="w-5 h-5" />
-                <span>Marcar como Resuelto</span>
-              </button>
-              <button
-                className="px-6 py-3 rounded-xl bg-secondary hover:bg-accent text-foreground font-semibold transition-all flex items-center justify-center space-x-2"
-                onClick={handleReminder}
-              >
-                <LucideIcons.Bell className="w-5 h-5" />
-                <span>Recordar</span>
-              </button>
-              <button
-                onClick={onClose}
-                className="px-6 py-3 rounded-xl bg-secondary hover:bg-accent text-foreground font-semibold transition-all"
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
-        </motion.div>
-      </div>
+              {/* Footer */}
+              <div className="p-6 border-t border-border bg-background/50 flex items-center justify-between">
+                <Button
+                  variant="outline"
+                  onClick={onClose}
+                  className="border-border"
+                >
+                  Cancelar
+                </Button>
+                
+                <Button
+                  onClick={handleResolve}
+                  disabled={isResolving}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  {isResolving ? (
+                    <>
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                        className="w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"
+                      />
+                      Resolviendo...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Marcar como Resuelta
+                    </>
+                  )}
+                </Button>
+              </div>
+            </Card>
+          </motion.div>
+        </>
+      )}
     </AnimatePresence>
   );
 }
