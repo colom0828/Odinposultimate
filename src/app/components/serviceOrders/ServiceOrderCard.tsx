@@ -1,5 +1,3 @@
-'use client';
-
 import { forwardRef } from 'react';
 import { motion, HTMLMotionProps } from 'motion/react';
 import * as LucideIcons from 'lucide-react';

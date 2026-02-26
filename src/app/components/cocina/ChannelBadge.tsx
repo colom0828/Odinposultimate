@@ -1,5 +1,3 @@
-'use client';
-
 import { Laptop, MonitorCheck, Code2, Globe, Smartphone } from 'lucide-react';
 
 type Channel = 'ODIN' | 'POS_EXTERNO' | 'API' | 'WEB' | 'MOBILE';

@@ -56,7 +56,7 @@ function saveResolvedAlertsToStorage(resolved: ResolvedAlert[]): void {
 // ========================================
 
 /**
- * Detecta alertas desde las citas del sistema
+ * Detecta alertas desde las citas del sistema (SPA)
  */
 export function detectAlertsFromAppointments(appointments: any[]): OperationalAlert[] {
   const alerts: OperationalAlert[] = [];
@@ -170,6 +170,105 @@ export function detectAlertsFromAppointments(appointments: any[]): OperationalAl
           timestamp: now.toISOString(),
         });
       }
+    }
+  });
+
+  return alerts;
+}
+
+/**
+ * Detecta alertas desde órdenes/ventas del sistema (RESTAURANT/HARDWARE)
+ */
+export function detectAlertsFromOrders(orders: any[]): OperationalAlert[] {
+  const alerts: OperationalAlert[] = [];
+  const now = new Date();
+
+  // Filtrar solo órdenes activas
+  const activeOrders = orders.filter(order => 
+    order.status !== 'completed' && order.status !== 'cancelled'
+  );
+
+  activeOrders.forEach(order => {
+    const orderTime = new Date(order.createdAt || order.timestamp);
+    const minutesInKitchen = Math.floor((now.getTime() - orderTime.getTime()) / (1000 * 60));
+
+    // 1. Orden retrasada (más de 20 minutos en cocina)
+    if (minutesInKitchen > 20 && order.status === 'in_kitchen') {
+      alerts.push({
+        id: `delayed-order-${order.id}`,
+        type: 'DELAYED_ORDER',
+        severity: minutesInKitchen > 35 ? 'high' : 'medium',
+        title: `Orden #${order.id} retrasada`,
+        description: `Lleva ${minutesInKitchen} minutos en cocina. Cliente ${order.customerName || 'Mesa ' + order.tableNumber} esperando.`,
+        timestamp: orderTime.toISOString(),
+        relatedId: `ORDER-${order.id}`,
+      });
+    }
+
+    // 2. Orden muy antigua (más de 45 minutos total)
+    if (minutesInKitchen > 45) {
+      alerts.push({
+        id: `old-order-${order.id}`,
+        type: 'OLD_ORDER',
+        severity: 'high',
+        title: `Orden #${order.id} muy retrasada`,
+        description: `Orden lleva ${minutesInKitchen} minutos. Requiere atención urgente.`,
+        timestamp: orderTime.toISOString(),
+        relatedId: `ORDER-${order.id}`,
+      });
+    }
+
+    // 3. Mesa ocupada mucho tiempo (más de 90 minutos)
+    if (order.tableNumber && minutesInKitchen > 90) {
+      alerts.push({
+        id: `long-table-${order.tableNumber}`,
+        type: 'LONG_TABLE',
+        severity: 'medium',
+        title: `Mesa ${order.tableNumber} ocupada más de 1 hora`,
+        description: `Cliente lleva ${Math.round(minutesInKitchen / 60)}h ${minutesInKitchen % 60}min. Considerar verificar si necesita algo.`,
+        timestamp: orderTime.toISOString(),
+        relatedId: `TABLE-${order.tableNumber}`,
+      });
+    }
+  });
+
+  return alerts;
+}
+
+/**
+ * Detecta alertas desde inventario (HARDWARE/RESTAURANT)
+ */
+export function detectAlertsFromInventory(products: any[]): OperationalAlert[] {
+  const alerts: OperationalAlert[] = [];
+
+  products.forEach(product => {
+    const stock = product.stock || product.quantity || 0;
+    const minStock = product.minStock || product.reorderPoint || 10;
+
+    // Stock bajo
+    if (stock <= minStock && stock > 0) {
+      alerts.push({
+        id: `low-stock-${product.id}`,
+        type: 'LOW_STOCK',
+        severity: stock <= minStock / 2 ? 'high' : 'medium',
+        title: `Stock bajo: ${product.name}`,
+        description: `Quedan solo ${stock} unidades. Programar reposición.`,
+        timestamp: new Date().toISOString(),
+        relatedId: `PRODUCT-${product.id}`,
+      });
+    }
+
+    // Stock agotado
+    if (stock === 0) {
+      alerts.push({
+        id: `out-stock-${product.id}`,
+        type: 'LOW_STOCK',
+        severity: 'high',
+        title: `Stock agotado: ${product.name}`,
+        description: `Producto sin inventario. Realizar pedido urgente.`,
+        timestamp: new Date().toISOString(),
+        relatedId: `PRODUCT-${product.id}`,
+      });
     }
   });
 

@@ -171,6 +171,11 @@ export function saveSession(user: User, token: string, rememberMe: boolean = fal
   localStorage.setItem('auth_session', JSON.stringify(sessionData));
   localStorage.setItem('auth_token', token);
   localStorage.setItem('current_user', JSON.stringify(user));
+  
+  // Para el sistema de inactividad
+  localStorage.setItem('odin-isAuthenticated', 'true');
+  localStorage.setItem('odin-last-activity', Date.now().toString());
+  localStorage.setItem('odin-user', JSON.stringify(user));
 }
 
 /**
@@ -223,6 +228,11 @@ export function clearSession(): void {
   localStorage.removeItem('auth_session');
   localStorage.removeItem('auth_token');
   localStorage.removeItem('current_user');
+  
+  // Para el sistema de inactividad
+  localStorage.removeItem('odin-isAuthenticated');
+  localStorage.removeItem('odin-last-activity');
+  localStorage.removeItem('odin-user');
 }
 
 /**

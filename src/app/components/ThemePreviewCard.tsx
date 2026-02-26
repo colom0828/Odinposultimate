@@ -1,5 +1,3 @@
-'use client';
-
 import { Check, LayoutDashboard, DollarSign } from 'lucide-react';
 import { motion } from 'motion/react';
 

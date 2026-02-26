@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect, useMemo } from 'react';
 import { Loader2, Save, Clock, Info } from 'lucide-react';
 import { Modal } from '../ui/modal';

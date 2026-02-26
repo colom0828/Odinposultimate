@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import * as LucideIcons from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../ui/dialog';

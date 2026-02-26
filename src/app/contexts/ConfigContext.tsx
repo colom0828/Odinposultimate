@@ -1,5 +1,3 @@
-'use client';
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { SystemConfig, SystemModule, LicenseStatus } from '../types/config.types';
 import { getSystemConfig } from '../services/configService';

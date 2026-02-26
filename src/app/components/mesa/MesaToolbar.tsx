@@ -1,5 +1,3 @@
-'use client';
-
 import { motion } from 'motion/react';
 import * as LucideIcons from 'lucide-react';
 import { MESA_TEMPLATES, MesaTemplate } from '@/app/types/mesa.types';

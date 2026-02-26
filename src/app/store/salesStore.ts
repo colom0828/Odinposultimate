@@ -378,12 +378,12 @@ export const createMockSale = () => {
     items,
     subtotal,
     discount: 0,
-    tax: subtotal * 0.16,
-    total: subtotal * 1.16,
+    tax: subtotal * 0.18, // ITBIS República Dominicana
+    total: subtotal * 1.18,
     payments: [
       {
         method: randomPayment,
-        amount: subtotal * 1.16,
+        amount: subtotal * 1.18,
       },
     ],
     paymentStatus: 'PAGADO',

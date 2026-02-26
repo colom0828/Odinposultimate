@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import * as LucideIcons from 'lucide-react';
 import { ExportFormat, ExportRequest } from '../../types/reports.types';

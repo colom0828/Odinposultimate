@@ -5,8 +5,8 @@
 
 import { Sale, SalesFilters, SalesStats } from '../types/sales.types';
 
-// URL base de la API (configurar en .env.local)
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+// URL base de la API (configurar en .env)
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // ========================================
 // HELPERS
@@ -332,7 +332,7 @@ export class SalesWebSocket {
    * Conectar al WebSocket
    */
   connect() {
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:5000/ws/sales';
+    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:5000/ws/sales';
     
     try {
       this.ws = new WebSocket(wsUrl);

@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import { Plus, Search, Edit, Trash2, Download, Filter, X, Save, Eye } from 'lucide-react';
 import { motion } from 'motion/react';

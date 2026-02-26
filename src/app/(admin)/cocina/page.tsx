@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { 
@@ -34,10 +32,7 @@ import {
 type FilterType = 'TODAS' | 'NUEVA' | 'PREPARANDO';
 
 export default function CocinaPage() {
-  // ✅ FIX: Estado para hidratación del store
-  const [isStoreHydrated, setIsStoreHydrated] = useState(false);
-
-  // ✅ FIX: Obtener el array completo, no llamar a funciones
+  // ✅ Obtener datos del store directamente
   const allOrders = useOrdersStore((state) => state.orders);
   const setKitchenStatus = useOrdersStore((state) => state.setKitchenStatus);
   const markAsDelivered = useOrdersStore((state) => state.markAsDelivered);
@@ -50,27 +45,15 @@ export default function CocinaPage() {
   const [cancelReason, setCancelReason] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<FilterType>('TODAS');
 
-  // Debug: verificar que el componente se monte correctamente + hidratar store
+  // Debug: verificar que el componente se monte correctamente
   useEffect(() => {
     console.log('✅ CocinaPage mounted successfully');
     console.log('📊 Orders count:', allOrders?.length ?? 0);
-    console.log('🌐 Current URL:', window.location.href);
-    console.log('📍 Pathname:', window.location.pathname);
-    
-    // ✅ FIX: Hidratar store de localStorage manualmente en el cliente
-    if (typeof window !== 'undefined') {
-      // Forzar re-hidratación del store de Zustand
-      const storedData = localStorage.getItem('odin-orders-storage');
-      if (storedData) {
-        console.log('💾 Hydrating orders from localStorage');
-      }
-      setIsStoreHydrated(true);
-    }
     
     return () => {
       console.log('❌ CocinaPage unmounted');
     };
-  }, []);
+  }, [allOrders]);
 
   // Filtrar órdenes para cocina (todas las órdenes activas excepto ENTREGADA y canceladas)
   const orders = useMemo(() => {
@@ -194,7 +177,7 @@ export default function CocinaPage() {
           {/* Botones de Simulación y Estado de Conexión */}
           <div className="flex items-center space-x-3">
             {/* Indicador de Conexión */}
-            <ConnectionStatus apiUrl={process.env.NEXT_PUBLIC_API_URL} />
+            <ConnectionStatus apiUrl={import.meta.env.VITE_API_URL} />
             
             <button
               onClick={createMockMesaOrder}

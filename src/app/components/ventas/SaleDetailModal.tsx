@@ -1,5 +1,3 @@
-'use client';
-
 import { motion, AnimatePresence } from 'motion/react';
 import * as LucideIcons from 'lucide-react';
 import {
@@ -161,7 +159,7 @@ export function SaleDetailModal({ sale, isOpen, onClose }: SaleDetailModalProps)
                       )}
                       {sale.tax > 0 && (
                         <div className="flex justify-between text-muted-foreground">
-                          <span>IVA (16%):</span>
+                          <span>ITBIS (18%):</span>
                           <span className="font-medium">{formatCurrency(sale.tax)}</span>
                         </div>
                       )}

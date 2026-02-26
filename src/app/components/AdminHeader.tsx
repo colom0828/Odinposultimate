@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import { LogOut, Bell, User, X, CheckCheck, Clock, ShoppingCart, Package, Trash2, Store } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -7,6 +5,7 @@ import { Button } from './ui/button';
 import { OdinLogo } from './OdinLogo';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
+import { clearSession } from '../utils/auth';
 import { useConfig } from '../contexts/ConfigContext';
 
 interface Notification {
@@ -67,6 +66,7 @@ export function AdminHeader() {
 
   const handleLogout = () => {
     // Navegación sin recarga de página
+    clearSession();
     window.history.pushState({}, '', '/auth/login');
     window.dispatchEvent(new PopStateEvent('popstate'));
   };

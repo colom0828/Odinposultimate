@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import { X, DollarSign } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';

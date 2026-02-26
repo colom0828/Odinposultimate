@@ -1,5 +1,3 @@
-'use client';
-
 import { X, DollarSign, Calendar, FileText, TrendingUp, TrendingDown, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Card } from './ui/card';

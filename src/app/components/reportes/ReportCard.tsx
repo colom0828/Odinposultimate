@@ -1,5 +1,3 @@
-'use client';
-
 import { motion } from 'motion/react';
 import * as LucideIcons from 'lucide-react';
 import { ReportDefinition } from '../../types/reports.types';

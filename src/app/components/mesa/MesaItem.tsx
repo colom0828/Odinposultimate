@@ -1,5 +1,3 @@
-'use client';
-
 import { motion } from 'motion/react';
 import * as LucideIcons from 'lucide-react';
 import { Mesa, MesaStatus, MESA_STATUS_CONFIG } from '@/app/types/mesa.types';

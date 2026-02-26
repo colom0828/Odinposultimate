@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import * as LucideIcons from 'lucide-react';
 import { ReportFilters, DateRangePreset, ShiftType } from '../../types/reports.types';

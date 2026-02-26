@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { Save, Building2, Receipt, Bell, Shield, Database, Check, Palette, RotateCcw } from 'lucide-react';
 import { Button } from '../../components/ui/button';
@@ -35,6 +33,26 @@ interface EmpresaData {
   direccion: string;
 }
 
+interface FacturacionElectronicaData {
+  tipoFacturacion: string;
+  facturaConsumo: string;
+  notaCredito: string;
+  branchCode: string;
+  comprobanteCredito: string;
+  comprobanteGubernamental: string;
+  dx: string;
+  rnc: string;
+  taxpayerType: string;
+  nombreLegal: string;
+  locationCode: string;
+  username: string;
+  password: string;
+  regimenEspecial: string;
+  production: boolean;
+  simplifiedTicket: boolean;
+  printTaxReceipt: boolean;
+}
+
 export default function ConfiguracionPage() {
   const [activeTab, setActiveTab] = useState('empresa');
   
@@ -53,6 +71,27 @@ export default function ConfiguracionPage() {
     direccion: '',
   });
 
+  // Estado para la configuración de facturación electrónica
+  const [facturacionData, setFacturacionData] = useState<FacturacionElectronicaData>({
+    tipoFacturacion: 'Digifact (dominicana)',
+    facturaConsumo: 'I-600',
+    notaCredito: '',
+    branchCode: 'I-700',
+    comprobanteCredito: '',
+    comprobanteGubernamental: '',
+    dx: '',
+    rnc: '',
+    taxpayerType: '',
+    nombreLegal: '',
+    locationCode: '',
+    username: '',
+    password: '',
+    regimenEspecial: '',
+    production: false,
+    simplifiedTicket: false,
+    printTaxReceipt: false,
+  });
+
   // Cargar datos desde localStorage al montar el componente
   useEffect(() => {
     const savedData = localStorage.getItem('odin-empresa-config');
@@ -61,6 +100,16 @@ export default function ConfiguracionPage() {
         setEmpresaData(JSON.parse(savedData));
       } catch (error) {
         console.error('Error al cargar datos de empresa:', error);
+      }
+    }
+    
+    // Cargar configuración de facturación electrónica
+    const savedFacturacion = localStorage.getItem('odin-facturacion-electronica');
+    if (savedFacturacion) {
+      try {
+        setFacturacionData(JSON.parse(savedFacturacion));
+      } catch (error) {
+        console.error('Error al cargar datos de facturación:', error);
       }
     }
     
@@ -373,44 +422,229 @@ export default function ConfiguracionPage() {
         {/* Facturación Tab */}
         <TabsContent value="facturacion" className="mt-6">
           <Card className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] backdrop-blur-sm p-6">
-            <h2 className="text-xl font-semibold text-[var(--odin-text-primary)] mb-6">Configuración de Facturación</h2>
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold text-[var(--odin-text-primary)] mb-2">Electronic Billing Configuration</h2>
+              <p className="text-sm text-[var(--odin-text-secondary)]">Configuración de facturación electrónica para República Dominicana (Digifact)</p>
+            </div>
+
+            {/* Tipo facturación electrónica */}
             <div className="space-y-6">
-              <div className="flex items-center justify-between p-4 bg-[var(--odin-input-bg)] rounded-lg border border-[var(--odin-border-accent)]">
-                <div>
-                  <p className="font-medium text-[var(--odin-text-primary)]">Facturación Electrónica</p>
-                  <p className="text-sm text-[var(--odin-text-secondary)]">Habilitar facturación electrónica del Ministerio de Hacienda</p>
-                </div>
-                <Switch defaultChecked />
+              <div className="space-y-2">
+                <Label htmlFor="tipo-facturacion" className="text-[var(--odin-text-primary)]">Tipo facturación electrónica</Label>
+                <Input
+                  id="tipo-facturacion"
+                  value={facturacionData.tipoFacturacion}
+                  onChange={(e) => setFacturacionData({...facturacionData, tipoFacturacion: e.target.value})}
+                  placeholder="Digifact (dominicana)"
+                  className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] focus:border-purple-500"
+                />
               </div>
-              <div className="flex items-center justify-between p-4 bg-[var(--odin-input-bg)] rounded-lg border border-[var(--odin-border-accent)]">
-                <div>
-                  <p className="font-medium text-[var(--odin-text-primary)]">Numeración Automática</p>
-                  <p className="text-sm text-[var(--odin-text-secondary)]">Generar números de factura automáticamente</p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+              {/* Grid de campos principales - 4 columnas */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="invoice-prefix" className="text-[var(--odin-text-primary)]">Prefijo de Factura</Label>
+                  <Label htmlFor="factura-consumo" className="text-[var(--odin-text-primary)]">Factura de Consumo</Label>
                   <Input
-                    id="invoice-prefix"
-                    placeholder="FAC-"
+                    id="factura-consumo"
+                    value={facturacionData.facturaConsumo}
+                    onChange={(e) => setFacturacionData({...facturacionData, facturaConsumo: e.target.value})}
+                    placeholder="I-600"
                     className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] focus:border-purple-500"
                   />
                 </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="next-number" className="text-[var(--odin-text-primary)]">Próximo Número</Label>
+                  <Label htmlFor="nota-credito" className="text-[var(--odin-text-primary)]">Nota de Crédito</Label>
                   <Input
-                    id="next-number"
-                    type="number"
-                    placeholder="1001"
+                    id="nota-credito"
+                    value={facturacionData.notaCredito}
+                    onChange={(e) => setFacturacionData({...facturacionData, notaCredito: e.target.value})}
+                    placeholder="Nota de Crédito"
                     className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] focus:border-purple-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="branch-code" className="text-[var(--odin-text-primary)]">Branch code</Label>
+                  <Input
+                    id="branch-code"
+                    value={facturacionData.branchCode}
+                    onChange={(e) => setFacturacionData({...facturacionData, branchCode: e.target.value})}
+                    placeholder="I-700"
+                    className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] focus:border-purple-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="comprobante-credito" className="text-[var(--odin-text-primary)]">Comprobante de Crédito Fiscal</Label>
+                  <Input
+                    id="comprobante-credito"
+                    value={facturacionData.comprobanteCredito}
+                    onChange={(e) => setFacturacionData({...facturacionData, comprobanteCredito: e.target.value})}
+                    placeholder="Comprobante de Crédito Fiscal"
+                    className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] focus:border-purple-500"
+                  />
+                </div>
+              </div>
+
+              {/* Segunda fila - 4 columnas */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="comprobante-gubernamental" className="text-[var(--odin-text-primary)]">Comprobante Gubernamental</Label>
+                  <Input
+                    id="comprobante-gubernamental"
+                    value={facturacionData.comprobanteGubernamental}
+                    onChange={(e) => setFacturacionData({...facturacionData, comprobanteGubernamental: e.target.value})}
+                    placeholder="Comprobante Gubernamental"
+                    className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] focus:border-purple-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="dx" className="text-[var(--odin-text-primary)]">Dx</Label>
+                  <Input
+                    id="dx"
+                    value={facturacionData.dx}
+                    onChange={(e) => setFacturacionData({...facturacionData, dx: e.target.value})}
+                    placeholder="Dx"
+                    className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] focus:border-purple-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="rnc" className="text-[var(--odin-text-primary)]">RNC</Label>
+                  <Input
+                    id="rnc"
+                    value={facturacionData.rnc}
+                    onChange={(e) => setFacturacionData({...facturacionData, rnc: e.target.value})}
+                    placeholder="123|53248"
+                    className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] focus:border-purple-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="taxpayer-type" className="text-[var(--odin-text-primary)]">Taxpayer Type</Label>
+                  <Select
+                    value={facturacionData.taxpayerType}
+                    onValueChange={(value) => setFacturacionData({...facturacionData, taxpayerType: value})}
+                  >
+                    <SelectTrigger className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] focus:border-purple-500">
+                      <SelectValue placeholder="Seleccionar tipo" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[var(--odin-bg-card)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] backdrop-blur-xl shadow-2xl">
+                      <SelectItem value="persona-fisica" className="text-[var(--odin-text-primary)] hover:bg-purple-600/30 focus:bg-purple-600/40 cursor-pointer">
+                        Persona Física
+                      </SelectItem>
+                      <SelectItem value="persona-juridica" className="text-[var(--odin-text-primary)] hover:bg-purple-600/30 focus:bg-purple-600/40 cursor-pointer">
+                        Persona Jurídica
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Tercera fila - 4 columnas */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="nombre-legal" className="text-[var(--odin-text-primary)]">Nombre legal del Negocio</Label>
+                  <Input
+                    id="nombre-legal"
+                    value={facturacionData.nombreLegal}
+                    onChange={(e) => setFacturacionData({...facturacionData, nombreLegal: e.target.value})}
+                    placeholder="Nombre legal del Negocio"
+                    className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] focus:border-purple-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="location-code" className="text-[var(--odin-text-primary)]">Location Code</Label>
+                  <Input
+                    id="location-code"
+                    value={facturacionData.locationCode}
+                    onChange={(e) => setFacturacionData({...facturacionData, locationCode: e.target.value})}
+                    placeholder="Location Code"
+                    className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] focus:border-purple-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="username" className="text-[var(--odin-text-primary)]">Username</Label>
+                  <Input
+                    id="username"
+                    value={facturacionData.username}
+                    onChange={(e) => setFacturacionData({...facturacionData, username: e.target.value})}
+                    placeholder="1-30"
+                    className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] focus:border-purple-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-[var(--odin-text-primary)]">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={facturacionData.password}
+                    onChange={(e) => setFacturacionData({...facturacionData, password: e.target.value})}
+                    placeholder="****"
+                    className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] focus:border-purple-500"
+                  />
+                </div>
+              </div>
+
+              {/* Régimen Especial */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="regimen-especial" className="text-[var(--odin-text-primary)]">Régimen Especial</Label>
+                  <Input
+                    id="regimen-especial"
+                    value={facturacionData.regimenEspecial}
+                    onChange={(e) => setFacturacionData({...facturacionData, regimenEspecial: e.target.value})}
+                    placeholder="Régimen Especial"
+                    className="bg-[var(--odin-input-bg)] border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] focus:border-purple-500"
+                  />
+                </div>
+
+                {/* Checkboxes */}
+                <div className="flex items-center justify-between p-4 bg-[var(--odin-input-bg)] rounded-lg border border-[var(--odin-border-accent)]">
+                  <Label htmlFor="production" className="text-[var(--odin-text-primary)] cursor-pointer">Production</Label>
+                  <Switch
+                    id="production"
+                    checked={facturacionData.production}
+                    onCheckedChange={(checked) => setFacturacionData({...facturacionData, production: checked})}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-4 bg-[var(--odin-input-bg)] rounded-lg border border-[var(--odin-border-accent)]">
+                  <Label htmlFor="simplified-ticket" className="text-[var(--odin-text-primary)] cursor-pointer">Simplified Ticket</Label>
+                  <Switch
+                    id="simplified-ticket"
+                    checked={facturacionData.simplifiedTicket}
+                    onCheckedChange={(checked) => setFacturacionData({...facturacionData, simplifiedTicket: checked})}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-4 bg-[var(--odin-input-bg)] rounded-lg border border-[var(--odin-border-accent)]">
+                  <Label htmlFor="print-tax-receipt" className="text-[var(--odin-text-primary)] cursor-pointer">Print tax receipt</Label>
+                  <Switch
+                    id="print-tax-receipt"
+                    checked={facturacionData.printTaxReceipt}
+                    onCheckedChange={(checked) => setFacturacionData({...facturacionData, printTaxReceipt: checked})}
                   />
                 </div>
               </div>
             </div>
+
             <div className="mt-6 flex justify-end">
-              <Button className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-lg hover:shadow-purple-500/50 text-white transition-all">
+              <Button 
+                className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-lg hover:shadow-purple-500/50 text-white transition-all"
+                onClick={() => {
+                  localStorage.setItem('odin-facturacion-electronica', JSON.stringify(facturacionData));
+                  toast.success('Configuración guardada', {
+                    description: 'La configuración de facturación electrónica se ha guardado exitosamente',
+                    icon: <Check className="w-4 h-4" />,
+                  });
+                }}
+              >
                 <Save className="w-4 h-4 mr-2" />
                 Guardar Cambios
               </Button>

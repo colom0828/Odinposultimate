@@ -107,6 +107,7 @@ export interface Order {
   createdAt: string;
   kitchenStartedAt?: string;
   kitchenReadyAt?: string;
+  deliveredAt?: string; // ✅ FIX: Agregado campo deliveredAt
   deliveryAssignedAt?: string;
   deliveryStartedAt?: string;
   deliveryCompletedAt?: string;

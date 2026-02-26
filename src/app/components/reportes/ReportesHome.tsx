@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useMemo } from 'react';
 import * as LucideIcons from 'lucide-react';
 import { motion } from 'motion/react';

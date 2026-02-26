@@ -1,8 +1,7 @@
-'use client';
-
 import { useState } from 'react';
 import { Plus, Printer, CheckCircle, XCircle, AlertCircle, Trash2, X } from 'lucide-react';
 import { motion } from 'motion/react';
+import { toast } from 'sonner';
 import { Button } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
@@ -17,6 +16,9 @@ const mockPrinters = [
 export default function ImpresorasPage() {
   const [printers, setPrinters] = useState(mockPrinters);
   const [showModal, setShowModal] = useState(false);
+  const [showConfigModal, setShowConfigModal] = useState(false);
+  const [selectedPrinter, setSelectedPrinter] = useState<any>(null);
+  const [customGroups, setCustomGroups] = useState<string[]>(['Caja', 'Cocina', 'Bar', 'Administración']);
   const [formData, setFormData] = useState({
     descripcion: '',
     ipe: '',
@@ -68,6 +70,12 @@ export default function ImpresorasPage() {
       location: formData.grupoImpresoras
     };
     setPrinters([...printers, newPrinter]);
+    
+    // Add to custom groups if it's a new group
+    if (formData.grupoImpresoras && !customGroups.includes(formData.grupoImpresoras)) {
+      setCustomGroups([...customGroups, formData.grupoImpresoras]);
+    }
+    
     setShowModal(false);
     setFormData({
       descripcion: '',
@@ -84,6 +92,191 @@ export default function ImpresorasPage() {
       ods: false,
       excluirTipos: ''
     });
+    toast.success('Impresora agregada exitosamente');
+  };
+
+  const handleEditPrinter = () => {
+    const updatedPrinters = printers.map(p => {
+      if (p.id === selectedPrinter.id) {
+        return {
+          id: p.id,
+          name: formData.descripcion,
+          model: formData.tipoImpresora,
+          ip: formData.ipe,
+          status: formData.status.toLowerCase(),
+          location: formData.grupoImpresoras
+        };
+      }
+      return p;
+    });
+    setPrinters(updatedPrinters);
+    
+    // Add to custom groups if it's a new group
+    if (formData.grupoImpresoras && !customGroups.includes(formData.grupoImpresoras)) {
+      setCustomGroups([...customGroups, formData.grupoImpresoras]);
+    }
+    
+    setShowConfigModal(false);
+    setFormData({
+      descripcion: '',
+      ipe: '',
+      ipSecundario: '',
+      status: 'Activo',
+      tipoImpresora: 'Comando',
+      tamanoLetra: 'Normal',
+      cortarPapel: 'Si',
+      grupoImpresoras: '',
+      imprimirDescripcion: false,
+      imprimirComandos: false,
+      imprimirCopia: false,
+      ods: false,
+      excluirTipos: ''
+    });
+    toast.success('Impresora configurada exitosamente');
+  };
+
+  const handleTestPrinter = (printer: any) => {
+    toast.info('Generando ticket de prueba...');
+    
+    // Generar ticket de prueba
+    const testTicket = `
+      <html>
+        <head>
+          <style>
+            @media print {
+              body { 
+                margin: 0; 
+                padding: 20px;
+                font-family: 'Courier New', monospace;
+                font-size: 12px;
+              }
+              .ticket {
+                width: 80mm;
+                margin: 0 auto;
+              }
+              .center { text-align: center; }
+              .bold { font-weight: bold; }
+              .line { 
+                border-bottom: 1px dashed #000; 
+                margin: 10px 0; 
+              }
+              table {
+                width: 100%;
+                border-collapse: collapse;
+              }
+              td {
+                padding: 4px 0;
+              }
+            }
+            body { 
+              margin: 0; 
+              padding: 20px;
+              font-family: 'Courier New', monospace;
+              font-size: 12px;
+              background: white;
+            }
+            .ticket {
+              width: 80mm;
+              margin: 0 auto;
+              background: white;
+              padding: 20px;
+            }
+            .center { text-align: center; }
+            .bold { font-weight: bold; }
+            .line { 
+              border-bottom: 1px dashed #000; 
+              margin: 10px 0; 
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            td {
+              padding: 4px 0;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="ticket">
+            <div class="center bold" style="font-size: 18px; margin-bottom: 10px;">
+              ODIN POS
+            </div>
+            <div class="center" style="margin-bottom: 5px;">
+              Sistema de Punto de Venta
+            </div>
+            <div class="center" style="margin-bottom: 15px; font-size: 10px;">
+              República Dominicana
+            </div>
+            
+            <div class="line"></div>
+            
+            <div class="center bold" style="font-size: 14px; margin: 15px 0;">
+              🖨️ TICKET DE PRUEBA
+            </div>
+            
+            <div class="line"></div>
+            
+            <table>
+              <tr>
+                <td class="bold">Impresora:</td>
+                <td style="text-align: right;">${printer.name}</td>
+              </tr>
+              <tr>
+                <td class="bold">Modelo:</td>
+                <td style="text-align: right;">${printer.model}</td>
+              </tr>
+              <tr>
+                <td class="bold">IP:</td>
+                <td style="text-align: right;">${printer.ip}</td>
+              </tr>
+              <tr>
+                <td class="bold">Ubicación:</td>
+                <td style="text-align: right;">${printer.location}</td>
+              </tr>
+              <tr>
+                <td class="bold">Estado:</td>
+                <td style="text-align: right;">${printer.status === 'online' ? 'En línea' : printer.status === 'offline' ? 'Fuera de línea' : 'Advertencia'}</td>
+              </tr>
+            </table>
+            
+            <div class="line"></div>
+            
+            <div class="center" style="margin: 15px 0;">
+              Fecha: ${new Date().toLocaleDateString('es-DO')}<br/>
+              Hora: ${new Date().toLocaleTimeString('es-DO')}
+            </div>
+            
+            <div class="line"></div>
+            
+            <div class="center" style="margin-top: 20px; font-size: 10px;">
+              ✓ Impresión exitosa<br/>
+              La impresora está funcionando correctamente
+            </div>
+            
+            <div class="center" style="margin-top: 30px; font-size: 10px;">
+              Powered by ODIN POS
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+    
+    // Crear ventana de impresión
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (printWindow) {
+      printWindow.document.write(testTicket);
+      printWindow.document.close();
+      
+      // Esperar a que cargue y luego imprimir
+      printWindow.onload = () => {
+        setTimeout(() => {
+          printWindow.print();
+          toast.success('Ticket de prueba enviado a la impresora');
+        }, 250);
+      };
+    } else {
+      toast.error('No se pudo abrir la ventana de impresión. Verifica los bloqueadores de ventanas emergentes.');
+    }
   };
 
   return (
@@ -199,10 +392,28 @@ export default function ImpresorasPage() {
             </div>
 
             <div className="mt-4 pt-4 border-t border-[var(--odin-border-accent)] flex gap-2">
-              <Button size="sm" variant="outline" className="flex-1 border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/20 hover:border-purple-500/50">
+              <Button size="sm" variant="outline" className="flex-1 border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/20 hover:border-purple-500/50" onClick={() => handleTestPrinter(printer)}>
                 Probar
               </Button>
-              <Button size="sm" variant="outline" className="flex-1 border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/20 hover:border-purple-500/50">
+              <Button size="sm" variant="outline" className="flex-1 border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/20 hover:border-purple-500/50" onClick={() => {
+                setSelectedPrinter(printer);
+                setFormData({
+                  descripcion: printer.name,
+                  ipe: printer.ip,
+                  ipSecundario: '',
+                  status: printer.status === 'online' ? 'Activo' : 'Inactivo',
+                  tipoImpresora: printer.model,
+                  tamanoLetra: 'Normal',
+                  cortarPapel: 'Si',
+                  grupoImpresoras: printer.location,
+                  imprimirDescripcion: false,
+                  imprimirComandos: false,
+                  imprimirCopia: false,
+                  ods: false,
+                  excluirTipos: ''
+                });
+                setShowConfigModal(true);
+              }}>
                 Configurar
               </Button>
               <Button size="sm" variant="outline" className="flex-1 border-[var(--odin-border-accent)] bg-[var(--odin-input-bg)] text-[var(--odin-text-primary)] hover:bg-purple-500/20 hover:border-purple-500/50" onClick={() => handleDeletePrinter(printer.id)}>
@@ -377,17 +588,19 @@ export default function ImpresorasPage() {
                     <label className="block text-sm font-medium text-slate-300 mb-2">
                       Grupo de Impresoras
                     </label>
-                    <select
-                      className="w-full px-4 py-2.5 bg-slate-800/50 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all"
+                    <input
+                      type="text"
+                      list="printer-groups"
+                      className="w-full px-4 py-2.5 bg-slate-800/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all"
+                      placeholder="Escribir o seleccionar grupo"
                       value={formData.grupoImpresoras}
                       onChange={(e) => setFormData({ ...formData, grupoImpresoras: e.target.value })}
-                    >
-                      <option value="">Seleccionar Grupo de Impresoras</option>
-                      <option value="Caja">Caja</option>
-                      <option value="Cocina">Cocina</option>
-                      <option value="Bar">Bar</option>
-                      <option value="Administración">Administración</option>
-                    </select>
+                    />
+                    <datalist id="printer-groups">
+                      {customGroups.map(group => (
+                        <option key={group} value={group} />
+                      ))}
+                    </datalist>
                   </div>
 
                   <div className="flex items-center space-x-3 p-3 bg-slate-800/30 rounded-lg border border-purple-500/20">
@@ -433,6 +646,235 @@ export default function ImpresorasPage() {
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Crear Impresora
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {showConfigModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <Card className="bg-gradient-to-br from-slate-900 to-slate-800 border-purple-500/30 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-purple-500/20">
+                <div>
+                  <h2 className="text-2xl font-bold text-white">Configurar Impresora</h2>
+                  <p className="text-sm text-slate-400 mt-1">Datos Generales</p>
+                </div>
+                <button 
+                  onClick={() => setShowConfigModal(false)}
+                  className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Form - Two Columns */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Descripción <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-2.5 bg-slate-800/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all"
+                      placeholder="Ingrese descripción"
+                      value={formData.descripcion}
+                      onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      IP Secundario
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-2.5 bg-slate-800/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all"
+                      placeholder="192.168.1.1"
+                      value={formData.ipSecundario}
+                      onChange={(e) => setFormData({ ...formData, ipSecundario: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Tipo de Impresora <span className="text-red-400">*</span>
+                    </label>
+                    <select
+                      className="w-full px-4 py-2.5 bg-slate-800/50 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all"
+                      value={formData.tipoImpresora}
+                      onChange={(e) => setFormData({ ...formData, tipoImpresora: e.target.value })}
+                    >
+                      <option value="Comando">Comando</option>
+                      <option value="Texto">Texto</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Cortar papel
+                    </label>
+                    <select
+                      className="w-full px-4 py-2.5 bg-slate-800/50 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all"
+                      value={formData.cortarPapel}
+                      onChange={(e) => setFormData({ ...formData, cortarPapel: e.target.value })}
+                    >
+                      <option value="Si">Si</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+
+                  <div className="flex items-center space-x-3 p-3 bg-slate-800/30 rounded-lg border border-purple-500/20">
+                    <input
+                      type="checkbox"
+                      id="imprimirDescripcion"
+                      className="w-4 h-4 bg-slate-700 border-purple-500/30 rounded text-purple-500 focus:ring-2 focus:ring-purple-500/50"
+                      checked={formData.imprimirDescripcion}
+                      onChange={(e) => setFormData({ ...formData, imprimirDescripcion: e.target.checked })}
+                    />
+                    <label htmlFor="imprimirDescripcion" className="text-sm text-slate-300 cursor-pointer">
+                      ¿Imprimir descripción del artículo?
+                    </label>
+                  </div>
+
+                  <div className="flex items-center space-x-3 p-3 bg-slate-800/30 rounded-lg border border-purple-500/20">
+                    <input
+                      type="checkbox"
+                      id="imprimirCopia"
+                      className="w-4 h-4 bg-slate-700 border-purple-500/30 rounded text-purple-500 focus:ring-2 focus:ring-purple-500/50"
+                      checked={formData.imprimirCopia}
+                      onChange={(e) => setFormData({ ...formData, imprimirCopia: e.target.checked })}
+                    />
+                    <label htmlFor="imprimirCopia" className="text-sm text-slate-300 cursor-pointer">
+                      ¿Imprimir copia?
+                    </label>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Excluir tipos de órdenes
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-2.5 bg-slate-800/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all"
+                      placeholder="Tipos a excluir"
+                      value={formData.excluirTipos}
+                      onChange={(e) => setFormData({ ...formData, excluirTipos: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                {/* Right Column */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      IPE <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-2.5 bg-slate-800/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all"
+                      placeholder="192.168.1.1"
+                      value={formData.ipe}
+                      onChange={(e) => setFormData({ ...formData, ipe: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Status
+                    </label>
+                    <select
+                      className="w-full px-4 py-2.5 bg-slate-800/50 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all"
+                      value={formData.status}
+                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                    >
+                      <option value="Activo">Activo</option>
+                      <option value="Inactivo">Inactivo</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Tamaño de Letra
+                    </label>
+                    <select
+                      className="w-full px-4 py-2.5 bg-slate-800/50 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all"
+                      value={formData.tamanoLetra}
+                      onChange={(e) => setFormData({ ...formData, tamanoLetra: e.target.value })}
+                    >
+                      <option value="Normal">Normal</option>
+                      <option value="Grande">Grande</option>
+                      <option value="Pequeño">Pequeño</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Grupo de Impresoras
+                    </label>
+                    <input
+                      type="text"
+                      list="printer-groups"
+                      className="w-full px-4 py-2.5 bg-slate-800/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all"
+                      placeholder="Escribir o seleccionar grupo"
+                      value={formData.grupoImpresoras}
+                      onChange={(e) => setFormData({ ...formData, grupoImpresoras: e.target.value })}
+                    />
+                    <datalist id="printer-groups">
+                      {customGroups.map(group => (
+                        <option key={group} value={group} />
+                      ))}
+                    </datalist>
+                  </div>
+
+                  <div className="flex items-center space-x-3 p-3 bg-slate-800/30 rounded-lg border border-purple-500/20">
+                    <input
+                      type="checkbox"
+                      id="imprimirComandos"
+                      className="w-4 h-4 bg-slate-700 border-purple-500/30 rounded text-purple-500 focus:ring-2 focus:ring-purple-500/50"
+                      checked={formData.imprimirComandos}
+                      onChange={(e) => setFormData({ ...formData, imprimirComandos: e.target.checked })}
+                    />
+                    <label htmlFor="imprimirComandos" className="text-sm text-slate-300 cursor-pointer">
+                      ¿Imprimir comandos individuales?
+                    </label>
+                  </div>
+
+                  <div className="flex items-center space-x-3 p-3 bg-slate-800/30 rounded-lg border border-purple-500/20">
+                    <input
+                      type="checkbox"
+                      id="ods"
+                      className="w-4 h-4 bg-slate-700 border-purple-500/30 rounded text-purple-500 focus:ring-2 focus:ring-purple-500/50"
+                      checked={formData.ods}
+                      onChange={(e) => setFormData({ ...formData, ods: e.target.checked })}
+                    />
+                    <label htmlFor="ods" className="text-sm text-slate-300 cursor-pointer">
+                      Order Display System (ODS)
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="mt-8 pt-6 border-t border-purple-500/20 flex justify-end gap-3">
+                <Button 
+                  variant="outline"
+                  onClick={() => setShowConfigModal(false)}
+                  className="border-purple-500/30 bg-slate-800/50 text-slate-300 hover:bg-slate-800 hover:border-purple-500/50 transition-all"
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={handleEditPrinter}
+                  className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:shadow-lg hover:shadow-purple-500/50 text-white transition-all"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Guardar Cambios
                 </Button>
               </div>
             </div>

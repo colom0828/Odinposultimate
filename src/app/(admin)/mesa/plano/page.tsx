@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'motion/react';
 import * as LucideIcons from 'lucide-react';

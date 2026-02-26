@@ -1,5 +1,3 @@
-'use client';
-
 import { motion } from 'motion/react';
 import * as LucideIcons from 'lucide-react';
 import { DailyPerformance as DailyPerformanceType } from '../../types/dashboard.types';

@@ -1,17 +1,30 @@
-'use client';
-
 import { motion, AnimatePresence } from 'motion/react';
-import * as LucideIcons from 'lucide-react';
+import { 
+  Bell, 
+  AlertTriangle, 
+  AlertCircle, 
+  Info, 
+  Clock, 
+  Timer, 
+  Users, 
+  PackageX, 
+  CheckCircle2, 
+  Eye, 
+  ArrowRight 
+} from 'lucide-react';
 import { OperationalAlert } from '../../types/dashboard.types';
 import { useState, useEffect } from 'react';
 import { AlertDetailModal } from './AlertDetailModal';
 import { AllAlertsModal } from './AllAlertsModal';
+import { toast } from 'sonner';
 
 interface OperationalAlertsProps {
   alerts: OperationalAlert[];
+  onResolve?: (alertId: string, resolution?: string) => void;
+  onRefresh?: () => void;
 }
 
-export function OperationalAlerts({ alerts }: OperationalAlertsProps) {
+export function OperationalAlerts({ alerts, onResolve, onRefresh }: OperationalAlertsProps) {
   const [selectedAlert, setSelectedAlert] = useState<OperationalAlert | null>(null);
   const [visibleAlerts, setVisibleAlerts] = useState<OperationalAlert[]>(alerts);
   const [showAllAlertsModal, setShowAllAlertsModal] = useState(false);
@@ -22,9 +35,25 @@ export function OperationalAlerts({ alerts }: OperationalAlertsProps) {
   }, [alerts]);
 
   // Función para manejar cuando se resuelve una alerta
-  const handleResolveAlert = (alertId: string) => {
+  const handleResolveAlert = (alertId: string, resolution?: string) => {
+    // Si hay callback personalizado, usarlo
+    if (onResolve) {
+      onResolve(alertId, resolution);
+    }
+
+    // Actualizar visualmente
     setVisibleAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
     setSelectedAlert(null);
+
+    // Toast notification
+    const alert = alerts.find(a => a.id === alertId);
+    toast.success(`Alerta resuelta: ${alert?.title || 'Alerta'}`, {
+      description: resolution || 'Se ha marcado la alerta como resuelta',
+      duration: 3000,
+    });
+
+    // Refrescar datos si hay callback
+    onRefresh?.();
   };
 
   // Función para seleccionar una alerta desde el modal de todas las alertas
@@ -41,7 +70,7 @@ export function OperationalAlerts({ alerts }: OperationalAlertsProps) {
         return {
           bg: 'bg-red-500/10',
           border: 'border-red-500/30',
-          icon: LucideIcons.AlertTriangle,
+          icon: AlertTriangle,
           iconColor: 'text-red-400',
           badge: 'bg-red-500',
           label: 'Urgente',
@@ -50,7 +79,7 @@ export function OperationalAlerts({ alerts }: OperationalAlertsProps) {
         return {
           bg: 'bg-yellow-500/10',
           border: 'border-yellow-500/30',
-          icon: LucideIcons.AlertCircle,
+          icon: AlertCircle,
           iconColor: 'text-yellow-400',
           badge: 'bg-yellow-500',
           label: 'Atención',
@@ -59,7 +88,7 @@ export function OperationalAlerts({ alerts }: OperationalAlertsProps) {
         return {
           bg: 'bg-blue-500/10',
           border: 'border-blue-500/30',
-          icon: LucideIcons.Info,
+          icon: Info,
           iconColor: 'text-blue-400',
           badge: 'bg-blue-500',
           label: 'Info',
@@ -70,13 +99,15 @@ export function OperationalAlerts({ alerts }: OperationalAlertsProps) {
   const getTypeIcon = (type: OperationalAlert['type']) => {
     switch (type) {
       case 'DELAYED_ORDER':
-        return LucideIcons.Clock;
+        return Clock;
       case 'OLD_ORDER':
-        return LucideIcons.Timer;
+        return Timer;
       case 'LONG_TABLE':
-        return LucideIcons.Users;
+        return Users;
       case 'LOW_STOCK':
-        return LucideIcons.PackageX;
+        return PackageX;
+      default:
+        return AlertCircle;
     }
   };
 
@@ -103,7 +134,7 @@ export function OperationalAlerts({ alerts }: OperationalAlertsProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center shadow-lg shadow-red-500/50">
-            <LucideIcons.Bell className="w-5 h-5 text-white" />
+            <Bell className="w-5 h-5 text-white" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-foreground">Alertas Operativas</h2>
@@ -136,7 +167,7 @@ export function OperationalAlerts({ alerts }: OperationalAlertsProps) {
         {visibleAlerts.length === 0 ? (
           <div className="py-16 flex flex-col items-center justify-center text-center">
             <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mb-4">
-              <LucideIcons.CheckCircle2 className="w-8 h-8 text-green-500" />
+              <CheckCircle2 className="w-8 h-8 text-green-500" />
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-1">Todo bajo control</h3>
             <p className="text-sm text-muted-foreground">No hay alertas operativas en este momento</p>
@@ -181,7 +212,7 @@ export function OperationalAlerts({ alerts }: OperationalAlertsProps) {
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                            <LucideIcons.Clock className="w-3 h-3" />
+                            <Clock className="w-3 h-3" />
                             <span>{formatTime(alert.timestamp)}</span>
                             {alert.relatedId && (
                               <>
@@ -198,7 +229,7 @@ export function OperationalAlerts({ alerts }: OperationalAlertsProps) {
                               setSelectedAlert(alert);
                             }}
                           >
-                            <LucideIcons.Eye className="w-3.5 h-3.5" />
+                            <Eye className="w-3.5 h-3.5" />
                             <span>Ver detalles</span>
                           </button>
                         </div>
@@ -219,7 +250,7 @@ export function OperationalAlerts({ alerts }: OperationalAlertsProps) {
           <div className="mt-4 pt-4 border-t border-border">
             <button className="w-full py-2.5 px-4 rounded-lg bg-secondary hover:bg-accent text-foreground text-sm font-medium transition-colors flex items-center justify-center space-x-2" onClick={() => setShowAllAlertsModal(true)}>
               <span>Ver detalles de todas las alertas</span>
-              <LucideIcons.ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -229,6 +260,7 @@ export function OperationalAlerts({ alerts }: OperationalAlertsProps) {
       {selectedAlert && (
         <AlertDetailModal 
           alert={selectedAlert} 
+          isOpen={!!selectedAlert}
           onClose={() => setSelectedAlert(null)} 
           onResolve={handleResolveAlert} 
         />

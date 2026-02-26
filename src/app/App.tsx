@@ -1,7 +1,8 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { ConfigProvider } from './contexts/ConfigContext';
+import { useInactivityTimeout, isSessionExpired, clearSession } from './hooks/useInactivityTimeout';
+import { InactivityWarningModal } from './components/InactivityWarningModal';
+import { Toaster } from 'sonner';
 
 // Auth pages
 import LoginPage from './(auth)/login/page';
@@ -13,7 +14,9 @@ import InventarioPage from './(admin)/inventario/page';
 import ProveedoresPage from './(admin)/proveedores/page';
 import OrdenesPage from './(admin)/ordenes/page';
 import ImpresorasPage from './(admin)/impresoras/page';
+import PrintTemplatesPage from './(admin)/print-templates/page';
 import CajaPage from './(admin)/caja/page';
+import ConfiguracionFacturacionPage from './(admin)/caja/configuracion-facturacion/page';
 import VentasPage from './(admin)/ventas/page';
 import ClientesPage from './(admin)/clientes/page';
 import EmpleadosPage from './(admin)/empleados/page';
@@ -68,7 +71,59 @@ export default function App() {
     return '/auth/login';
   });
 
+  // Estado para el modal de advertencia
+  const [showWarningModal, setShowWarningModal] = useState(false);
+
+  // Manejar logout por inactividad
+  const handleInactivityLogout = () => {
+    setShowWarningModal(false); // Cerrar modal si está abierto
+    clearSession();
+    
+    // Redirigir al login
+    window.history.pushState({}, '', '/auth/login');
+    setCurrentPath('/auth/login');
+    
+    // Notificar al usuario
+    console.log('⏱️ Sesión cerrada por inactividad (10 minutos)');
+  };
+
+  // Manejar advertencia de inactividad (faltan 2 minutos)
+  const handleInactivityWarning = () => {
+    setShowWarningModal(true);
+    console.log('⚠️ Advertencia: faltan 2 minutos para cerrar sesión');
+  };
+
+  // Activar el hook de inactividad solo si está autenticado
+  const isAuthenticated = typeof window !== 'undefined' 
+    ? localStorage.getItem('odin-isAuthenticated') === 'true'
+    : false;
+
+  // Hook de inactividad (10 minutos = 600,000 ms, warning a los 8 minutos)
+  const { resetTimer, timeRemaining } = useInactivityTimeout({
+    onInactive: handleInactivityLogout,
+    onWarning: handleInactivityWarning,
+    timeout: 10 * 60 * 1000, // 10 minutos
+    warningTime: 2 * 60 * 1000, // Warning 2 minutos antes
+  });
+
+  // Manejar "Continuar Sesión" desde el modal
+  const handleContinueSession = () => {
+    setShowWarningModal(false);
+    resetTimer();
+    console.log('✅ Sesión extendida por el usuario');
+  };
+
   useEffect(() => {
+    // ✅ VERIFICACIÓN DE SESIÓN AL INICIO
+    // Si la sesión expiró, limpiar y redirigir a login
+    if (isSessionExpired(10 * 60 * 1000)) {
+      clearSession();
+      window.history.pushState({}, '', '/auth/login');
+      setCurrentPath('/auth/login');
+      console.log('🔒 Sesión expirada. Redirigiendo a login...');
+      return;
+    }
+
     // Forzar sincronización con la URL actual al montar (importante para Figma Sites)
     setCurrentPath(window.location.pathname);
     
@@ -138,8 +193,14 @@ export default function App() {
         case '/admin/impresoras':
           PageComponent = ImpresorasPage;
           break;
+        case '/admin/print-templates':
+          PageComponent = PrintTemplatesPage;
+          break;
         case '/admin/caja':
           PageComponent = CajaPage;
+          break;
+        case '/admin/caja/configuracion-facturacion':
+          PageComponent = ConfiguracionFacturacionPage;
           break;
         case '/admin/ventas':
           PageComponent = VentasPage;
@@ -215,6 +276,22 @@ export default function App() {
   return (
     <ConfigProvider>
       {renderPage()}
+      
+      {/* Modal de advertencia de inactividad */}
+      <InactivityWarningModal
+        isOpen={showWarningModal}
+        timeRemaining={timeRemaining}
+        onContinue={handleContinueSession}
+        onLogout={handleInactivityLogout}
+      />
+      
+      {/* Toaster para notificaciones */}
+      <Toaster 
+        position="top-right"
+        expand={true}
+        richColors
+        theme="dark"
+      />
     </ConfigProvider>
   );
 }

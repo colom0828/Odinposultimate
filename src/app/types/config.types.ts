@@ -47,6 +47,7 @@ export enum SystemModule {
   // Operacionales
   CASH_REGISTER = 'cash_register',
   PRINTERS = 'printers',
+  PRINT_TEMPLATES = 'print_templates',  // ⭐ NUEVO - Editor de plantillas de impresión
   
   // Específicos por industria
   TABLES = 'tables',                    // Mesas (restaurante)

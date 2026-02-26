@@ -81,6 +81,124 @@ export const useOrdersStore = create<OrdersStore>()(
 
         console.log('✅ Nueva orden creada:', newOrder.orderNumber, newOrder);
       },
+
+      // Cambiar estado de cocina
+      setKitchenStatus: (orderId, status) => {
+        set((state) => ({
+          orders: state.orders.map((order) => {
+            if (order.id !== orderId) return order;
+            
+            // ✅ FIX: Agregar timestamps según el estado
+            const updates: Partial<Order> = { kitchenStatus: status };
+            
+            if (status === KitchenStatus.PREPARANDO && !order.kitchenStartedAt) {
+              updates.kitchenStartedAt = new Date().toISOString();
+            }
+            
+            if (status === KitchenStatus.LISTA && !order.kitchenReadyAt) {
+              updates.kitchenReadyAt = new Date().toISOString();
+            }
+            
+            return { ...order, ...updates };
+          }),
+        }));
+        console.log(`✅ Kitchen status cambiado: ${orderId} → ${status}`);
+      },
+
+      // Cambiar estado de delivery
+      setDeliveryStatus: (orderId, status) => {
+        set((state) => ({
+          orders: state.orders.map((order) =>
+            order.id === orderId
+              ? { ...order, deliveryStatus: status }
+              : order
+          ),
+        }));
+        console.log(`✅ Delivery status cambiado: ${orderId} → ${status}`);
+      },
+
+      // Asignar courier
+      assignCourier: (orderId, courierId, courierName) => {
+        set((state) => ({
+          orders: state.orders.map((order) =>
+            order.id === orderId
+              ? {
+                  ...order,
+                  assignedCourier: { id: courierId, name: courierName },
+                  deliveryStatus: DeliveryStatus.EN_RUTA, // ✅ FIX: Corregido de EN_CAMINO a EN_RUTA
+                }
+              : order
+          ),
+        }));
+        console.log(`✅ Courier asignado: ${orderId} → ${courierName}`);
+      },
+
+      // Marcar como entregada
+      markAsDelivered: (orderId) => {
+        set((state) => ({
+          orders: state.orders.map((order) =>
+            order.id === orderId
+              ? { 
+                  ...order, 
+                  kitchenStatus: KitchenStatus.ENTREGADA,
+                  deliveredAt: new Date().toISOString(),
+                }
+              : order
+          ),
+        }));
+        console.log(`✅ Orden marcada como entregada: ${orderId}`);
+      },
+
+      // Enviar a delivery
+      sendToDelivery: (orderId) => {
+        set((state) => ({
+          orders: state.orders.map((order) =>
+            order.id === orderId
+              ? { 
+                  ...order, 
+                  kitchenStatus: KitchenStatus.ENTREGADA,
+                  deliveryStatus: DeliveryStatus.PENDIENTE_ASIGNAR,
+                }
+              : order
+          ),
+        }));
+        console.log(`✅ Orden enviada a delivery: ${orderId}`);
+      },
+
+      // Cancelar orden
+      cancelOrder: (orderId, reason) => {
+        set((state) => ({
+          orders: state.orders.map((order) =>
+            order.id === orderId
+              ? { 
+                  ...order, 
+                  canceledAt: new Date().toISOString(),
+                  cancelReason: reason,
+                }
+              : order
+          ),
+        }));
+        console.log(`✅ Orden cancelada: ${orderId} - Razón: ${reason}`);
+      },
+
+      // Eliminar orden
+      deleteOrder: (orderId) => {
+        set((state) => ({
+          orders: state.orders.filter((order) => order.id !== orderId),
+        }));
+        console.log(`✅ Orden eliminada: ${orderId}`);
+      },
+
+      // Limpiar todas las órdenes
+      clearAllOrders: () => {
+        set({ orders: [] });
+        console.log('✅ Todas las órdenes eliminadas');
+      },
+
+      // Obtener orden por ID
+      getOrderById: (orderId) => {
+        return get().orders.find((order) => order.id === orderId);
+      },
     }),
     {
       name: 'odin-orders-storage', // Nombre en localStorage
@@ -109,7 +227,7 @@ export const createMockDeliveryOrder = () => {
       addressNumber: `${Math.floor(100 + Math.random() * 900)}`,
       reference: 'Edificio azul, depto 301',
       neighborhood: 'Centro',
-      city: 'CDMX',
+      city: 'Santo Domingo',
       deliveryCost: 40,
     },
     items: [

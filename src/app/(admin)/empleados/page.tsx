@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useMemo } from 'react';
 import { Plus, Search, Edit, Trash2, X, Save, Filter } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';

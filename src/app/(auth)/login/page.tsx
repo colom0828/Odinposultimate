@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import { LogIn, Mail, Lock, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -149,6 +147,7 @@ export default function LoginPage() {
               transition={{ duration: 0.5, delay: 0.6 }}
               onSubmit={handleLogin} 
               className="space-y-6"
+              autoComplete="off"
             >
               {/* Error Message */}
               <AnimatePresence>
@@ -180,6 +179,8 @@ export default function LoginPage() {
                   <Input
                     id="email"
                     type="text"
+                    name="username"
+                    autoComplete="off"
                     value={username}
                     onChange={(e) => {
                       setUsername(e.target.value);
@@ -205,6 +206,8 @@ export default function LoginPage() {
                   <Input
                     id="password"
                     type="password"
+                    name="password"
+                    autoComplete="off"
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
@@ -215,7 +218,7 @@ export default function LoginPage() {
                         ? 'border-red-500/50 focus:border-red-500' 
                         : 'border-purple-500/30 focus:border-purple-500'
                     }`}
-                    placeholder="••••"
+                    placeholder="••••••••"
                     required
                   />
                 </div>

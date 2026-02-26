@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { LayoutDashboard, RefreshCw } from 'lucide-react';
@@ -8,7 +6,12 @@ import { getDashboardConfig } from '../../config/dashboardsConfig';
 import { getSupervisorDashboardData, isRestaurantDashboard, isSpaDashboard } from '../../services/dashboardService';
 import type { DashboardData } from '../../services/dashboardService';
 import { AppointmentsService } from '../../services/appointmentsService';
-import { AlertsService, detectAlertsFromAppointments } from '../../services/alertsService';
+import { 
+  AlertsService, 
+  detectAlertsFromAppointments,
+  detectAlertsFromOrders,
+  detectAlertsFromInventory
+} from '../../services/alertsService';
 
 // Restaurant Components
 import { RealTimeOperations } from '../../components/dashboard/RealTimeOperations';

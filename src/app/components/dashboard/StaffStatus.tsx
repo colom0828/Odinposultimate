@@ -1,5 +1,3 @@
-'use client';
-
 import { motion, AnimatePresence } from 'motion/react';
 import * as LucideIcons from 'lucide-react';
 import { StaffStatus as StaffStatusType, StaffMember } from '../../types/dashboard.types';

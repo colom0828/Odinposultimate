@@ -1,22 +1,25 @@
-'use client';
-
 import { useState, useEffect } from 'react';
-import { DollarSign, Plus, TrendingUp, TrendingDown, Eye, Download, Search } from 'lucide-react';
+import { DollarSign, Plus, TrendingUp, TrendingDown, Eye, Download, Search, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Card } from '../../components/ui/card';
-import { formatCurrency } from '../../utils/formatters';
-import { useCashRegister } from '../../hooks/useCashRegister';
-import { OpenCashRegisterModal } from '../../components/OpenCashRegisterModal';
-import { CloseCashRegisterModal } from '../../components/CloseCashRegisterModal';
-import { CashTransactionModal } from '../../components/CashTransactionModal';
-import { CashMovementDetailsModal } from '../../components/CashMovementDetailsModal';
-import { CashRegisterLogDetailsModal } from '../../components/CashRegisterLogDetailsModal';
-import { CashMovement, CashRegisterLog } from '../../hooks/useCashRegister';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Card } from '@/app/components/ui/card';
+import { formatCurrency } from '@/app/utils/formatters';
+import { useCashRegister, CashMovement, CashRegisterLog } from '@/app/hooks/useCashRegister';
+import { OpenCashRegisterModal } from '@/app/components/OpenCashRegisterModal';
+import { CloseCashRegisterModal } from '@/app/components/CloseCashRegisterModal';
+import { CashTransactionModal } from '@/app/components/CashTransactionModal';
+import { CashMovementDetailsModal } from '@/app/components/CashMovementDetailsModal';
+import { CashRegisterLogDetailsModal } from '@/app/components/CashRegisterLogDetailsModal';
 
 export default function CajaPage() {
   const { movements, logs, isLoading } = useCashRegister();
+  
+  // Navigation helper (usando el sistema nativo del proyecto)
+  const navigate = (path: string) => {
+    window.history.pushState({}, '', path);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
   
   // Estados - TODOS declarados primero antes de cualquier useEffect
   const [activeTab, setActiveTab] = useState<'movements' | 'logs'>('movements');
@@ -564,6 +567,21 @@ export default function CajaPage() {
         onClose={() => setShowLogDetails(false)}
         log={selectedLog}
       />
+
+      {/* Floating button - Electronic Billing Configuration */}
+      <motion.button
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 20 }}
+        onClick={() => navigate('/admin/caja/configuracion-facturacion')}
+        className="fixed bottom-24 right-6 w-14 h-14 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full shadow-lg hover:shadow-xl hover:shadow-purple-500/50 transition-all duration-300 flex items-center justify-center group z-50"
+        title="Configurar Facturación Electrónica"
+      >
+        <Settings className="w-6 h-6 text-white" />
+        <span className="absolute right-full mr-3 bg-[var(--odin-bg-card)] border border-[var(--odin-border-accent)] text-[var(--odin-text-primary)] px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+          Facturación Electrónica
+        </span>
+      </motion.button>
     </motion.div>
   );
 }

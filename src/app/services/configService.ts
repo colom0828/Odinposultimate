@@ -99,7 +99,15 @@ const getRestaurantModules = (): ModuleConfig[] => [
     label: 'Impresoras',
     icon: 'Printer',
     route: '/admin/impresoras',
-    order: 9,
+    order: 7,
+  },
+  {
+    id: SystemModule.PRINT_TEMPLATES,
+    enabled: true,
+    label: 'Plantillas de Impresión',
+    icon: 'Receipt',
+    route: '/admin/print-templates',
+    order: 8,
   },
   {
     id: SystemModule.CUSTOMERS,
@@ -107,7 +115,7 @@ const getRestaurantModules = (): ModuleConfig[] => [
     label: 'Clientes',
     icon: 'Users',
     route: '/admin/clientes',
-    order: 10,
+    order: 9,
   },
   {
     id: SystemModule.EMPLOYEES,
@@ -115,16 +123,7 @@ const getRestaurantModules = (): ModuleConfig[] => [
     label: 'Empleados',
     icon: 'UserCircle',
     route: '/admin/empleados',
-    order: 11,
-  },
-  {
-    id: SystemModule.REPORTS,
-    enabled: true,
-    label: 'Reportes',
-    icon: 'BarChart3',
-    route: '/admin/reportes',
-    requiredPlan: LicensePlan.PROFESSIONAL,
-    order: 12,
+    order: 10,
   },
   {
     id: SystemModule.SETTINGS,
@@ -132,7 +131,7 @@ const getRestaurantModules = (): ModuleConfig[] => [
     label: 'Configuración',
     icon: 'Settings',
     route: '/admin/configuracion',
-    order: 13,
+    order: 11,
   },
 ];
 
@@ -195,12 +194,20 @@ const getRetailModules = (): ModuleConfig[] => [
     order: 7,
   },
   {
+    id: SystemModule.PRINT_TEMPLATES,
+    enabled: true,
+    label: 'Plantillas de Impresión',
+    icon: 'Receipt',
+    route: '/admin/print-templates',
+    order: 8,
+  },
+  {
     id: SystemModule.CUSTOMERS,
     enabled: true,
     label: 'Clientes',
     icon: 'Users',
     route: '/admin/clientes',
-    order: 8,
+    order: 9,
   },
   {
     id: SystemModule.EMPLOYEES,
@@ -208,7 +215,7 @@ const getRetailModules = (): ModuleConfig[] => [
     label: 'Empleados',
     icon: 'UserCircle',
     route: '/admin/empleados',
-    order: 9,
+    order: 10,
   },
   {
     id: SystemModule.SETTINGS,
@@ -216,7 +223,7 @@ const getRetailModules = (): ModuleConfig[] => [
     label: 'Configuración',
     icon: 'Settings',
     route: '/admin/configuracion',
-    order: 10,
+    order: 11,
   },
 ];
 
@@ -256,12 +263,28 @@ const getTechServiceModules = (): ModuleConfig[] => [
     order: 4,
   },
   {
+    id: SystemModule.PRINTERS,
+    enabled: true,
+    label: 'Impresoras',
+    icon: 'Printer',
+    route: '/admin/impresoras',
+    order: 5,
+  },
+  {
+    id: SystemModule.PRINT_TEMPLATES,
+    enabled: true,
+    label: 'Plantillas de Impresión',
+    icon: 'Receipt',
+    route: '/admin/print-templates',
+    order: 6,
+  },
+  {
     id: SystemModule.CUSTOMERS,
     enabled: true,
     label: 'Clientes',
     icon: 'Users',
     route: '/admin/clientes',
-    order: 5,
+    order: 7,
   },
   {
     id: SystemModule.EMPLOYEES,
@@ -269,7 +292,7 @@ const getTechServiceModules = (): ModuleConfig[] => [
     label: 'Técnicos',
     icon: 'UserCircle',
     route: '/admin/empleados',
-    order: 6,
+    order: 8,
   },
   {
     id: SystemModule.SETTINGS,
@@ -277,7 +300,7 @@ const getTechServiceModules = (): ModuleConfig[] => [
     label: 'Configuración',
     icon: 'Settings',
     route: '/admin/configuracion',
-    order: 7,
+    order: 9,
   },
 ];
 
@@ -340,12 +363,28 @@ const getSpaModules = (): ModuleConfig[] => [
     order: 7,
   },
   {
+    id: SystemModule.PRINTERS,
+    enabled: true,
+    label: 'Impresoras',
+    icon: 'Printer',
+    route: '/admin/impresoras',
+    order: 8,
+  },
+  {
+    id: SystemModule.PRINT_TEMPLATES,
+    enabled: true,
+    label: 'Plantillas de Impresión',
+    icon: 'Receipt',
+    route: '/admin/print-templates',
+    order: 9,
+  },
+  {
     id: SystemModule.EMPLOYEES,
     enabled: true,
     label: 'Empleados / Técnicos',
     icon: 'UserCircle',
     route: '/admin/empleados',
-    order: 8,
+    order: 10,
   },
   {
     id: SystemModule.REPORTS,
@@ -354,7 +393,7 @@ const getSpaModules = (): ModuleConfig[] => [
     icon: 'BarChart3',
     route: '/admin/reportes',
     requiredPlan: LicensePlan.PROFESSIONAL,
-    order: 9,
+    order: 11,
   },
   {
     id: SystemModule.SETTINGS,
@@ -362,7 +401,7 @@ const getSpaModules = (): ModuleConfig[] => [
     label: 'Configuración',
     icon: 'Settings',
     route: '/admin/configuracion',
-    order: 10,
+    order: 12,
   },
 ];
 
@@ -425,12 +464,28 @@ const getHardwareModules = (): ModuleConfig[] => [
     order: 7,
   },
   {
+    id: SystemModule.PRINTERS,
+    enabled: true,
+    label: 'Impresoras',
+    icon: 'Printer',
+    route: '/admin/impresoras',
+    order: 8,
+  },
+  {
+    id: SystemModule.PRINT_TEMPLATES,
+    enabled: true,
+    label: 'Plantillas de Impresión',
+    icon: 'Receipt',
+    route: '/admin/print-templates',
+    order: 9,
+  },
+  {
     id: SystemModule.CUSTOMERS,
     enabled: true,
     label: 'Clientes',
     icon: 'Users',
     route: '/admin/clientes',
-    order: 8,
+    order: 10,
   },
   {
     id: SystemModule.REPORTS,
@@ -439,7 +494,7 @@ const getHardwareModules = (): ModuleConfig[] => [
     icon: 'BarChart3',
     route: '/admin/reportes',
     requiredPlan: LicensePlan.PROFESSIONAL,
-    order: 9,
+    order: 11,
   },
   {
     id: SystemModule.SETTINGS,
@@ -447,7 +502,7 @@ const getHardwareModules = (): ModuleConfig[] => [
     label: 'Configuración',
     icon: 'Settings',
     route: '/admin/configuracion',
-    order: 10,
+    order: 12,
   },
 ];
 
