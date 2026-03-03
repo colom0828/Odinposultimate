@@ -4,11 +4,13 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-import { Settings } from 'lucide-react';
-import { Label } from '../ui/label';
+import { useState } from 'react';
 import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
 import { Slider } from '../ui/slider';
+import { Download, Settings } from 'lucide-react'; // ⭐ Agregar Settings
+import { Button } from '../ui/button';
 import {
   Select,
   SelectContent,
@@ -18,6 +20,8 @@ import {
 } from '../ui/select';
 import { BlockConfig, AlignmentType, FontSizeType, FontWeightType } from '../../types/print-templates.types';
 import { Textarea } from '../ui/textarea';
+import { toast } from 'sonner';
+import { useTenant } from '../../contexts/TenantContext'; // ⭐ NUEVO
 
 interface BlockConfigPanelProps {
   block: BlockConfig;
@@ -211,9 +215,21 @@ export function BlockConfigPanel({ block, onChange }: BlockConfigPanelProps) {
       case 'business_info':
         return (
           <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-            <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-              Información del Negocio
-            </h4>
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
+                Información del Negocio
+              </h4>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={loadBusinessDataFromBilling}
+                className="text-xs"
+              >
+                <Download className="w-3 h-3 mr-1" />
+                Cargar desde Facturación
+              </Button>
+            </div>
             <div>
               <Label htmlFor="businessName">Nombre del Negocio</Label>
               <Input
@@ -254,12 +270,18 @@ export function BlockConfigPanel({ block, onChange }: BlockConfigPanelProps) {
             </div>
             <div>
               <Label htmlFor="businessRNC">RNC (Registro Nacional del Contribuyente)</Label>
-              <Input
-                id="businessRNC"
-                value={block.content?.businessRNC ?? '130-12345-6'}
-                onChange={(e) => updateContent({ businessRNC: e.target.value })}
-                placeholder="130-12345-6"
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="businessRNC"
+                  value={block.content?.businessRNC ?? '130-12345-6'}
+                  onChange={(e) => updateContent({ businessRNC: e.target.value })}
+                  placeholder="130-12345-6"
+                  className="flex-1"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Se carga automáticamente desde Configuración de Facturación Electrónica
+              </p>
             </div>
             <div>
               <Label htmlFor="businessNCF">NCF (Número de Comprobante Fiscal)</Label>
@@ -341,7 +363,7 @@ export function BlockConfigPanel({ block, onChange }: BlockConfigPanelProps) {
               <div className="flex-1">
                 <Label>Mostrar 10% de Ley</Label>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Muestra el 10% de Ley (propina obligatoria en RD)
+                  Cargo obligatorio - propina para empleados (RD)
                 </p>
               </div>
               <Switch
@@ -479,6 +501,43 @@ export function BlockConfigPanel({ block, onChange }: BlockConfigPanelProps) {
 
       default:
         return null;
+    }
+  }
+
+  // Función para cargar datos del negocio desde la facturación
+  function loadBusinessDataFromBilling() {
+    try {
+      // Obtener configuración de facturación electrónica desde localStorage
+      const storageKey = 'odin-ebilling-configs';
+      const configsJson = localStorage.getItem(storageKey);
+      
+      if (!configsJson) {
+        toast.error('No se encontró configuración de facturación electrónica');
+        return;
+      }
+      
+      const configs = JSON.parse(configsJson);
+      
+      if (!Array.isArray(configs) || configs.length === 0) {
+        toast.error('No hay configuraciones de facturación disponibles');
+        return;
+      }
+      
+      // Tomar la primera configuración activa o la primera disponible
+      const activeConfig = configs.find((c: any) => c.isActive) || configs[0];
+      
+      // Actualizar el contenido del bloque con los datos de facturación
+      updateContent({
+        businessName: activeConfig.legalName || block.content?.businessName,
+        businessRNC: activeConfig.rnc || block.content?.businessRNC,
+        // Los demás campos se mantienen como están (dirección, teléfono, email)
+        // porque no están en la configuración de facturación
+      });
+      
+      toast.success('✅ Datos cargados desde Facturación Electrónica');
+    } catch (error) {
+      console.error('Error cargando datos de facturación:', error);
+      toast.error('Error al cargar los datos de facturación');
     }
   }
 }

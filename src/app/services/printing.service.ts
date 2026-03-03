@@ -259,14 +259,14 @@ export class PrintService {
         ${data.propina ? `
           <div class="item-row">
             <div>10% de Ley:</div>
-            <div>RD$ ${data.propina.toFixed(2)}</div>
+            <div style="color: green;">+RD$ ${data.propina.toFixed(2)}</div>
           </div>
         ` : ''}
         
         ${data.discount ? `
           <div class="item-row">
             <div>Descuento:</div>
-            <div>-RD$ ${data.discount.toFixed(2)}</div>
+            <div style="color: red;">-RD$ ${data.discount.toFixed(2)}</div>
           </div>
         ` : ''}
         

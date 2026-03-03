@@ -15,6 +15,7 @@ interface SortableBlockItemProps {
   isSelected: boolean;
   onClick: () => void;
   onDelete: () => void;
+  onToggleVisibility: () => void; // ⭐ NUEVO
 }
 
 export function SortableBlockItem({
@@ -22,6 +23,7 @@ export function SortableBlockItem({
   isSelected,
   onClick,
   onDelete,
+  onToggleVisibility, // ⭐ NUEVO
 }: SortableBlockItemProps) {
   const {
     attributes,
@@ -106,8 +108,7 @@ export function SortableBlockItem({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              // Esta acción se manejará desde el padre
-              console.log('Toggle visibility for:', block.id);
+              onToggleVisibility(); // ⭐ NUEVO
             }}
             className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400"
             title={block.visible ? 'Ocultar' : 'Mostrar'}

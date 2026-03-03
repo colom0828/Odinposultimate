@@ -741,3 +741,24 @@ export async function switchBusinessType(businessType: BusinessType): Promise<Co
     timestamp: new Date().toISOString(),
   };
 }
+
+/**
+ * ⭐ NUEVO: Obtener label amigable del tipo de negocio
+ */
+export function getBusinessTypeLabel(businessType: BusinessType): string {
+  const labels: Record<BusinessType, string> = {
+    [BusinessType.RETAIL]: 'Comercio Minorista',
+    [BusinessType.HARDWARE]: 'Ferretería',
+    [BusinessType.WHOLESALE]: 'Mayorista',
+    [BusinessType.RESTAURANT]: 'Restaurante',
+    [BusinessType.BAR]: 'Bar',
+    [BusinessType.CAFE]: 'Cafetería',
+    [BusinessType.FAST_FOOD]: 'Comida Rápida',
+    [BusinessType.DELIVERY_ONLY]: 'Solo Delivery',
+    [BusinessType.SPA]: 'Spa / Salón',
+    [BusinessType.TECH_SERVICE]: 'Servicio Técnico',
+    [BusinessType.MULTI_VERTICAL]: 'Multi-Vertical',
+  };
+
+  return labels[businessType] || businessType;
+}

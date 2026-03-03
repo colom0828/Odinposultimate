@@ -150,7 +150,7 @@ export interface InvoiceData {
   subtotal: number;
   discount: number;
   itbis: number; // 18% en RD
-  propina?: number; // 10% ley opcional
+  propina?: number; // 10% de Ley (propina obligatoria para empleados)
   total: number;
   
   // Payment

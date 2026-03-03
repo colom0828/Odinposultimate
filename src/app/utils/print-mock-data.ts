@@ -249,13 +249,12 @@ export function getMockSpaData(): PrintData {
     totals: {
       subtotal: 1950.00,
       tax: 351.00, // ITBIS 18% para República Dominicana
-      discount: 195.00, // 10% descuento
-      tip: 195.00, // Propina sugerida 10%
-      total: 2301.00,
+      tip: 195.00, // 10% de Ley (propina obligatoria para empleados)
+      total: 2496.00, // subtotal + tax + tip
     },
     payment: {
       method: 'Tarjeta de Débito',
-      amountPaid: 2301.00,
+      amountPaid: 2496.00,
       change: 0,
       reference: '****5678',
     },
@@ -324,13 +323,12 @@ export function getMockHardwareStoreData(): PrintData {
     totals: {
       subtotal: 5215.00,
       tax: 938.70, // ITBIS 18% para República Dominicana
-      discount: 261.00, // 5% descuento por volumen
-      tip: 521.50, // Propina sugerida 10%
-      total: 6414.20,
+      tip: 521.50, // 10% de Ley (propina obligatoria para empleados)
+      total: 6675.20, // subtotal + tax + tip
     },
     payment: {
       method: 'Transferencia Bancaria',
-      amountPaid: 6414.20,
+      amountPaid: 6675.20,
       change: 0,
       reference: 'SPEI-20260225-1045',
     },

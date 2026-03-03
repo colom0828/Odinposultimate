@@ -528,7 +528,7 @@ function generateTotalsBlock(block: BlockConfig, data: PrintData): string {
     html += `<tr><td>Descuento:</td><td style="text-align: right;">-$${data.totals.discount.toFixed(2)}</td></tr>`;
   }
   if (block.content?.showTip && data.totals.tip && data.totals.tip > 0) {
-    html += `<tr><td>10% de Ley:</td><td style="text-align: right;">$${data.totals.tip.toFixed(2)}</td></tr>`;
+    html += `<tr><td>10% de Ley:</td><td style="text-align: right; color: green;">+$${data.totals.tip.toFixed(2)}</td></tr>`;
   }
   if (block.content?.showTotal) {
     html += `<tr><td><strong>TOTAL:</strong></td><td style="text-align: right;"><strong>$${data.totals.total.toFixed(2)}</strong></td></tr>`;

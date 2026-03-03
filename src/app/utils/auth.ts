@@ -1,5 +1,6 @@
 /**
  * ODIN POS - Utilidades de Autenticación
+ * ⭐ ACTUALIZADO: Soporte Multi-Tenant (DB-per-Tenant)
  */
 
 // ==========================================
@@ -16,6 +17,7 @@ const USERS_DB = [
     nombre: 'Administrador',
     rol: 'admin',
     activo: true,
+    tenantId: 'spa_001', // ⭐ NUEVO: Usuario pertenece a tenant SPA
   },
   {
     id: '2',
@@ -25,6 +27,7 @@ const USERS_DB = [
     nombre: 'Vendedor Demo',
     rol: 'vendedor',
     activo: true,
+    tenantId: 'rest_002', // ⭐ NUEVO: Usuario pertenece a tenant Restaurante
   },
   {
     id: '3',
@@ -34,6 +37,17 @@ const USERS_DB = [
     nombre: 'Cajero Demo',
     rol: 'cajero',
     activo: true,
+    tenantId: 'ferre_003', // ⭐ NUEVO: Usuario pertenece a tenant Ferretería
+  },
+  {
+    id: '4',
+    username: 'master',
+    email: 'master@odinpos.com',
+    password: 'master123',
+    nombre: 'Master Admin',
+    rol: 'master_admin',
+    activo: true,
+    tenantId: null, // Master admin puede acceder a todos los tenants
   },
 ];
 
@@ -48,11 +62,14 @@ export interface User {
   nombre: string;
   rol: string;
   activo: boolean;
+  tenantId: string | null; // ⭐ NUEVO: ID del tenant al que pertenece
+  availableTenants?: string[]; // ⭐ NUEVO: Lista de tenants a los que puede acceder
 }
 
 export interface LoginCredentials {
   username: string;
   password: string;
+  tenantId?: string; // ⭐ NUEVO: Opcional si el usuario tiene múltiples tenants
 }
 
 export interface AuthResponse {
@@ -60,6 +77,22 @@ export interface AuthResponse {
   message?: string;
   user?: User;
   token?: string;
+  tenantId?: string; // ⭐ NUEVO: Tenant activo en esta sesión
+}
+
+/**
+ * ⭐ NUEVO: Estructura del JWT Token
+ * En producción, el backend ASP.NET Core generará este JWT
+ * con los claims necesarios
+ */
+export interface JWTPayload {
+  sub: string;              // User ID
+  email: string;
+  name: string;
+  role: string;
+  tenant_id: string;        // ⭐ CRÍTICO: Claim del tenant
+  iat: number;              // Issued at
+  exp: number;              // Expiration
 }
 
 // ==========================================
@@ -71,7 +104,7 @@ export interface AuthResponse {
  * ⚠️ Solo para desarrollo - Reemplazar con API cuando tengas backend
  */
 export function validateCredentials(credentials: LoginCredentials): AuthResponse {
-  const { username, password } = credentials;
+  const { username, password, tenantId } = credentials;
 
   // Buscar usuario por username o email
   const user = USERS_DB.find(
@@ -95,6 +128,14 @@ export function validateCredentials(credentials: LoginCredentials): AuthResponse
     };
   }
 
+  // Verificar tenant si se proporciona
+  if (tenantId && user.tenantId && user.tenantId !== tenantId) {
+    return {
+      success: false,
+      message: 'El usuario no tiene acceso a este tenant.',
+    };
+  }
+
   // Usuario válido - remover password antes de retornar
   const { password: _, ...userWithoutPassword } = user;
 
@@ -103,6 +144,7 @@ export function validateCredentials(credentials: LoginCredentials): AuthResponse
     message: 'Inicio de sesión exitoso',
     user: userWithoutPassword,
     token: generateMockToken(user.id), // Token temporal
+    tenantId: user.tenantId || undefined, // ⭐ NUEVO: Incluir tenantId en la respuesta
   };
 }
 
@@ -138,6 +180,7 @@ export async function validateCredentialsAPI(
       message: 'Inicio de sesión exitoso',
       user: data.user,
       token: data.token,
+      tenantId: data.tenantId, // ⭐ NUEVO: Incluir tenantId en la respuesta
     };
   } catch (error) {
     return {
@@ -159,6 +202,7 @@ function generateMockToken(userId: string): string {
 
 /**
  * Guardar sesión en localStorage
+ * ⭐ ACTUALIZADO: Guarda también el tenant_id
  */
 export function saveSession(user: User, token: string, rememberMe: boolean = false): void {
   const sessionData = {
@@ -171,6 +215,11 @@ export function saveSession(user: User, token: string, rememberMe: boolean = fal
   localStorage.setItem('auth_session', JSON.stringify(sessionData));
   localStorage.setItem('auth_token', token);
   localStorage.setItem('current_user', JSON.stringify(user));
+  
+  // ⭐ NUEVO: Guardar tenant_id actual
+  if (user.tenantId) {
+    localStorage.setItem('odin_current_tenant', user.tenantId);
+  }
   
   // Para el sistema de inactividad
   localStorage.setItem('odin-isAuthenticated', 'true');
@@ -222,12 +271,71 @@ export function getCurrentUser(): User | null {
 }
 
 /**
+ * ⭐ NUEVO: Obtener tenant_id del usuario actual
+ */
+export function getCurrentTenantId(): string | null {
+  const user = getCurrentUser();
+  if (!user || !user.tenantId) {
+    return localStorage.getItem('odin_current_tenant');
+  }
+  return user.tenantId;
+}
+
+/**
+ * ⭐ NUEVO: Cambiar de tenant (si el usuario tiene acceso a múltiples tenants)
+ * En producción, esto llamaría a: POST /api/auth/switch-tenant
+ */
+export async function switchTenant(tenantId: string): Promise<AuthResponse> {
+  const user = getCurrentUser();
+  
+  if (!user) {
+    return {
+      success: false,
+      message: 'No hay sesión activa',
+    };
+  }
+
+  // Verificar que el usuario tenga acceso a este tenant
+  if (user.availableTenants && !user.availableTenants.includes(tenantId)) {
+    return {
+      success: false,
+      message: 'No tienes acceso a este tenant',
+    };
+  }
+
+  // Actualizar tenant en el usuario
+  const updatedUser = { ...user, tenantId };
+  
+  // Generar nuevo token (en producción, el backend generaría un nuevo JWT)
+  const newToken = generateMockToken(user.id);
+  
+  // Guardar nueva sesión
+  const session = getSession();
+  if (session) {
+    saveSession(updatedUser, newToken, false);
+  }
+
+  return {
+    success: true,
+    message: `Cambiado a tenant: ${tenantId}`,
+    user: updatedUser,
+    token: newToken,
+    tenantId,
+  };
+}
+
+/**
  * Cerrar sesión
+ * ⭐ ACTUALIZADO: Limpia también el tenant_id
  */
 export function clearSession(): void {
+  // Limpiar datos de autenticación
   localStorage.removeItem('auth_session');
   localStorage.removeItem('auth_token');
   localStorage.removeItem('current_user');
+  
+  // ⭐ NUEVO: Limpiar tenant actual
+  localStorage.removeItem('odin_current_tenant');
   
   // Para el sistema de inactividad
   localStorage.removeItem('odin-isAuthenticated');

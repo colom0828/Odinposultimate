@@ -309,7 +309,7 @@ export function TemplatePreview({ template, data }: TemplatePreviewProps) {
           {block.content?.showTip && data.totals.tip && data.totals.tip > 0 && (
             <tr>
               <td className="text-right py-0.5">10% de Ley:</td>
-              <td className="text-right text-green-600">${data.totals.tip.toFixed(2)}</td>
+              <td className="text-right text-green-600">+${data.totals.tip.toFixed(2)}</td>
             </tr>
           )}
           {block.content?.showTotal && (

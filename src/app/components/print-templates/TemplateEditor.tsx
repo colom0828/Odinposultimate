@@ -98,6 +98,28 @@ export function TemplateEditor({ template, onChange }: TemplateEditorProps) {
     }
   };
 
+  // ⭐ NUEVO: Alternar visibilidad de bloque
+  const handleToggleVisibility = (blockId: string) => {
+    const updatedBlocks = template.blocks.map(block =>
+      block.id === blockId
+        ? { ...block, visible: !block.visible }
+        : block
+    );
+    
+    onChange({
+      ...template,
+      blocks: updatedBlocks
+    });
+    
+    // Si el bloque seleccionado es el que se está ocultando, actualizar su estado
+    if (selectedBlock?.id === blockId) {
+      setSelectedBlock({
+        ...selectedBlock,
+        visible: !selectedBlock.visible
+      });
+    }
+  };
+
   const handleAddBlock = (type: BlockType) => {
     const newBlock: BlockConfig = {
       id: `block-${Date.now()}`,
@@ -155,6 +177,7 @@ export function TemplateEditor({ template, onChange }: TemplateEditorProps) {
                       isSelected={selectedBlock?.id === block.id}
                       onClick={() => setSelectedBlock(block)}
                       onDelete={() => handleBlockDelete(block.id)}
+                      onToggleVisibility={() => handleToggleVisibility(block.id)}
                     />
                   ))
               )}
