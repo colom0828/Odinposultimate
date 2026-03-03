@@ -15,6 +15,7 @@ import ProveedoresPage from './(admin)/proveedores/page';
 import OrdenesPage from './(admin)/ordenes/page';
 import ImpresorasPage from './(admin)/impresoras/page';
 import PrintTemplatesPage from './(admin)/print-templates/page';
+import GiftcardsPage from './(admin)/giftcards/page'; // ⭐ NUEVO
 import CajaPage from './(admin)/caja/page';
 import ConfiguracionFacturacionPage from './(admin)/caja/configuracion-facturacion/page';
 import VentasPage from './(admin)/ventas/page';
@@ -195,6 +196,9 @@ export default function App() {
           break;
         case '/admin/print-templates':
           PageComponent = PrintTemplatesPage;
+          break;
+        case '/admin/giftcards': // ⭐ NUEVO
+          PageComponent = GiftcardsPage;
           break;
         case '/admin/caja':
           PageComponent = CajaPage;

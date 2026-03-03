@@ -48,6 +48,7 @@ export enum SystemModule {
   CASH_REGISTER = 'cash_register',
   PRINTERS = 'printers',
   PRINT_TEMPLATES = 'print_templates',  // ⭐ NUEVO - Editor de plantillas de impresión
+  GIFTCARDS = 'giftcards',              // ⭐ NUEVO - Tarjetas de Regalo / Giftcards
   
   // Específicos por industria
   TABLES = 'tables',                    // Mesas (restaurante)

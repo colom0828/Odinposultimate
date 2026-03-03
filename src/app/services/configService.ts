@@ -110,12 +110,20 @@ const getRestaurantModules = (): ModuleConfig[] => [
     order: 8,
   },
   {
+    id: SystemModule.GIFTCARDS, // ⭐ NUEVO
+    enabled: true,
+    label: 'Giftcards',
+    icon: 'Gift',
+    route: '/admin/giftcards',
+    order: 9,
+  },
+  {
     id: SystemModule.CUSTOMERS,
     enabled: true,
     label: 'Clientes',
     icon: 'Users',
     route: '/admin/clientes',
-    order: 9,
+    order: 10,
   },
   {
     id: SystemModule.EMPLOYEES,
@@ -123,7 +131,7 @@ const getRestaurantModules = (): ModuleConfig[] => [
     label: 'Empleados',
     icon: 'UserCircle',
     route: '/admin/empleados',
-    order: 10,
+    order: 11,
   },
   {
     id: SystemModule.SETTINGS,
@@ -131,7 +139,7 @@ const getRestaurantModules = (): ModuleConfig[] => [
     label: 'Configuración',
     icon: 'Settings',
     route: '/admin/configuracion',
-    order: 11,
+    order: 12,
   },
 ];
 
@@ -202,12 +210,20 @@ const getRetailModules = (): ModuleConfig[] => [
     order: 8,
   },
   {
+    id: SystemModule.GIFTCARDS, // ⭐ NUEVO
+    enabled: true,
+    label: 'Giftcards',
+    icon: 'Gift',
+    route: '/admin/giftcards',
+    order: 9,
+  },
+  {
     id: SystemModule.CUSTOMERS,
     enabled: true,
     label: 'Clientes',
     icon: 'Users',
     route: '/admin/clientes',
-    order: 9,
+    order: 10,
   },
   {
     id: SystemModule.EMPLOYEES,
@@ -215,7 +231,7 @@ const getRetailModules = (): ModuleConfig[] => [
     label: 'Empleados',
     icon: 'UserCircle',
     route: '/admin/empleados',
-    order: 10,
+    order: 11,
   },
   {
     id: SystemModule.SETTINGS,
@@ -223,7 +239,7 @@ const getRetailModules = (): ModuleConfig[] => [
     label: 'Configuración',
     icon: 'Settings',
     route: '/admin/configuracion',
-    order: 11,
+    order: 12,
   },
 ];
 
@@ -279,12 +295,20 @@ const getTechServiceModules = (): ModuleConfig[] => [
     order: 6,
   },
   {
+    id: SystemModule.GIFTCARDS, // ⭐ NUEVO
+    enabled: true,
+    label: 'Giftcards',
+    icon: 'Gift',
+    route: '/admin/giftcards',
+    order: 7,
+  },
+  {
     id: SystemModule.CUSTOMERS,
     enabled: true,
     label: 'Clientes',
     icon: 'Users',
     route: '/admin/clientes',
-    order: 7,
+    order: 8,
   },
   {
     id: SystemModule.EMPLOYEES,
@@ -292,7 +316,7 @@ const getTechServiceModules = (): ModuleConfig[] => [
     label: 'Técnicos',
     icon: 'UserCircle',
     route: '/admin/empleados',
-    order: 8,
+    order: 9,
   },
   {
     id: SystemModule.SETTINGS,
@@ -300,7 +324,7 @@ const getTechServiceModules = (): ModuleConfig[] => [
     label: 'Configuración',
     icon: 'Settings',
     route: '/admin/configuracion',
-    order: 9,
+    order: 10,
   },
 ];
 
@@ -379,12 +403,20 @@ const getSpaModules = (): ModuleConfig[] => [
     order: 9,
   },
   {
+    id: SystemModule.GIFTCARDS, // ⭐ NUEVO
+    enabled: true,
+    label: 'Giftcards',
+    icon: 'Gift',
+    route: '/admin/giftcards',
+    order: 10,
+  },
+  {
     id: SystemModule.EMPLOYEES,
     enabled: true,
     label: 'Empleados / Técnicos',
     icon: 'UserCircle',
     route: '/admin/empleados',
-    order: 10,
+    order: 11,
   },
   {
     id: SystemModule.REPORTS,
@@ -393,7 +425,7 @@ const getSpaModules = (): ModuleConfig[] => [
     icon: 'BarChart3',
     route: '/admin/reportes',
     requiredPlan: LicensePlan.PROFESSIONAL,
-    order: 11,
+    order: 12,
   },
   {
     id: SystemModule.SETTINGS,
@@ -401,7 +433,7 @@ const getSpaModules = (): ModuleConfig[] => [
     label: 'Configuración',
     icon: 'Settings',
     route: '/admin/configuracion',
-    order: 12,
+    order: 13,
   },
 ];
 
@@ -480,12 +512,20 @@ const getHardwareModules = (): ModuleConfig[] => [
     order: 9,
   },
   {
+    id: SystemModule.GIFTCARDS, // ⭐ NUEVO
+    enabled: true,
+    label: 'Giftcards',
+    icon: 'Gift',
+    route: '/admin/giftcards',
+    order: 10,
+  },
+  {
     id: SystemModule.CUSTOMERS,
     enabled: true,
     label: 'Clientes',
     icon: 'Users',
     route: '/admin/clientes',
-    order: 10,
+    order: 11,
   },
   {
     id: SystemModule.REPORTS,
@@ -494,7 +534,7 @@ const getHardwareModules = (): ModuleConfig[] => [
     icon: 'BarChart3',
     route: '/admin/reportes',
     requiredPlan: LicensePlan.PROFESSIONAL,
-    order: 11,
+    order: 12,
   },
   {
     id: SystemModule.SETTINGS,
@@ -502,7 +542,7 @@ const getHardwareModules = (): ModuleConfig[] => [
     label: 'Configuración',
     icon: 'Settings',
     route: '/admin/configuracion',
-    order: 12,
+    order: 13,
   },
 ];
 
