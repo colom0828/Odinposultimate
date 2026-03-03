@@ -7,7 +7,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, Filter, Eye, RefreshCw, Ban, Printer, Mail, Send } from 'lucide-react';
+import { Plus, Search, Filter, Eye, RefreshCw, Ban, Printer, Mail, Send, Zap, Download } from 'lucide-react'; // ⭐ AGREGADO Zap, Download
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -26,11 +26,11 @@ import {
   getGiftcardKPIs,
   initializeMockData,
 } from '../../services/giftcard.service';
-import { GiftcardCreateModal } from '../../components/giftcards/GiftcardCreateModal';
 import { GiftcardRedeemModal } from '../../components/giftcards/GiftcardRedeemModal';
 import { GiftcardRechargeModal } from '../../components/giftcards/GiftcardRechargeModal';
 import { GiftcardDetailModal } from '../../components/giftcards/GiftcardDetailModal';
 import { GiftcardVoidModal } from '../../components/giftcards/GiftcardVoidModal';
+import { GiftcardActivateModal } from '../../components/giftcards/GiftcardActivateModal';
 
 export default function GiftcardsPage() {
   const { config } = useConfig(); // ⭐ CORREGIDO
@@ -40,11 +40,11 @@ export default function GiftcardsPage() {
   const [filters, setFilters] = useState<GiftcardFilters>({});
   
   // Modales
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [showRedeemModal, setShowRedeemModal] = useState(false);
   const [showRechargeModal, setShowRechargeModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showVoidModal, setShowVoidModal] = useState(false);
+  const [showActivateModal, setShowActivateModal] = useState(false); // ⭐ NUEVO
   const [selectedGiftcard, setSelectedGiftcard] = useState<Giftcard | null>(null);
 
   // Cargar datos
@@ -131,6 +131,29 @@ export default function GiftcardsPage() {
     );
   };
 
+  // ⭐ NUEVO - Badge de estado de activación POS
+  const getActivationBadge = (activationStatus: Giftcard['activationStatus']) => {
+    const styles = {
+      PENDING_ACTIVATION: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+      ACTIVATED: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
+      SUSPENDED: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
+      DEACTIVATED: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
+    };
+    
+    const labels = {
+      PENDING_ACTIVATION: 'Pendiente',
+      ACTIVATED: 'Activa POS',
+      SUSPENDED: 'Suspendida',
+      DEACTIVATED: 'Desactivada',
+    };
+    
+    return (
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[activationStatus]}`}>
+        {labels[activationStatus]}
+      </span>
+    );
+  };
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-DO', {
       style: 'currency',
@@ -166,6 +189,30 @@ export default function GiftcardsPage() {
     setShowVoidModal(true);
   };
 
+  const handleActivate = (giftcard: Giftcard) => {
+    setSelectedGiftcard(giftcard);
+    setShowActivateModal(true);
+  };
+
+  // ⭐ NUEVO - Sincronizar con POS
+  const handleSyncWithPOS = async () => {
+    try {
+      setIsLoading(true);
+      toast.info('Sincronizando con POS Veriphone...');
+      
+      // Simular sincronización con delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      await loadData();
+      toast.success('✅ Sincronización completada');
+    } catch (error) {
+      console.error('Error syncing with POS:', error);
+      toast.error('Error al sincronizar con POS');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading && !kpis) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -186,15 +233,16 @@ export default function GiftcardsPage() {
             {getModuleLabel()}
           </h1>
           <p className="text-slate-600 dark:text-slate-400 mt-1">
-            Gestiona tarjetas de regalo, saldo y redenciones
+            Activar, gestionar y visualizar tarjetas de regalo del POS
           </p>
         </div>
         <Button
-          onClick={() => setShowCreateModal(true)}
-          className="bg-gradient-to-r from-purple-600 to-pink-600"
+          onClick={handleSyncWithPOS}
+          disabled={isLoading}
+          className="bg-gradient-to-r from-emerald-600 to-cyan-600"
         >
-          <Plus className="w-4 h-4 mr-2" />
-          Crear Giftcard
+          <Download className="w-4 h-4 mr-2" />
+          Sincronizar con POS
         </Button>
       </div>
 
@@ -346,6 +394,9 @@ export default function GiftcardsPage() {
                 <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                   Estado
                 </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                  POS
+                </th>
                 <th className="px-4 py-3 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                   Saldo
                 </th>
@@ -387,6 +438,7 @@ export default function GiftcardsPage() {
                     </td>
                     <td className="px-4 py-3">{getTypeBadge(giftcard.type)}</td>
                     <td className="px-4 py-3">{getStatusBadge(giftcard.status)}</td>
+                    <td className="px-4 py-3">{getActivationBadge(giftcard.activationStatus)}</td>
                     <td className="px-4 py-3 text-right">
                       <span className="font-semibold text-slate-900 dark:text-white">
                         {formatCurrency(giftcard.balance)}
@@ -428,6 +480,17 @@ export default function GiftcardsPage() {
                             </Button>
                           </>
                         )}
+                        {/* ⭐ NUEVO - Botón de activación POS para tarjetas físicas pendientes */}
+                        {giftcard.type === 'PHYSICAL' && giftcard.activationStatus === 'PENDING_ACTIVATION' && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleActivate(giftcard)}
+                            title="Activar en POS"
+                          >
+                            <Zap className="w-4 h-4 text-emerald-600" />
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -439,17 +502,6 @@ export default function GiftcardsPage() {
       </div>
 
       {/* Modales */}
-      {showCreateModal && (
-        <GiftcardCreateModal
-          isOpen={showCreateModal}
-          onClose={() => setShowCreateModal(false)}
-          onSuccess={() => {
-            loadData();
-            setShowCreateModal(false);
-          }}
-        />
-      )}
-
       {showRedeemModal && selectedGiftcard && (
         <GiftcardRedeemModal
           isOpen={showRedeemModal}
@@ -505,6 +557,21 @@ export default function GiftcardsPage() {
           onSuccess={() => {
             loadData();
             setShowVoidModal(false);
+            setSelectedGiftcard(null);
+          }}
+        />
+      )}
+
+      {showActivateModal && selectedGiftcard && (
+        <GiftcardActivateModal
+          giftcard={selectedGiftcard}
+          onClose={() => {
+            setShowActivateModal(false);
+            setSelectedGiftcard(null);
+          }}
+          onSuccess={() => {
+            loadData();
+            setShowActivateModal(false);
             setSelectedGiftcard(null);
           }}
         />
